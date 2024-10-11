@@ -85,12 +85,11 @@ dta6 <- dta4 %>%
 summary(dta6$x)
 ```
 
-The idea behind this measure is to estimate the exposure of to the stock market crash by by
+The idea behind this measure is to estimate the exposure of to the stock market crash by
 using the portion of income linked to the stock market. To do so, we compute the share of dividend
 income in total income at the state level. Dividends correspond to the distribution of firms' profits
 to stockholders; they are closely tied to asset prices, thus we expect fluctuations in the stock
-market to affect them. That is why we use it as a proxy for the exposure to the stock market.
-
+market to affect them. That is why we use it as a proxy for the exposure to the stock market. 
 In Chodorow-Reich et al. (2021), the authors estimate an MPC of 3.2 cents of dollar for stock wealth
 annually. These findings support the idea of a correlation between the exposure to the stock market
 and consumption and gives us reasons to think that measuring this exposure could help us understand
@@ -102,17 +101,26 @@ the impact of the stock market crash on consumption.
 
 Reg (1): studies effect of stock market crash on consumption at state level by
 using state-level car sales as a proxy.
+
+The idea behind this regression is to study the effect of a stock market crash
+on the way market exposure affected consumption, using an interaction term, while
+controlling for both state and time fixed-effects.
+
+We use car sales at the state level as a proxy for consumption $y_{st}$ (independent variable).
+According to Romer (1990), stock market crash caused consumers to "delay current spendings" 
+on durable goods, lowering overall consumption. Cars are good examples of this type of goods,
+thus observing changes in car sales might be considered as a good way to estimate changes in
+consumption behavior.
 $x_s$ (independent variable) captures the exposure of state incomes to 
 fluctuations in the stock market; computed by dividing the proportion of total
 income from dividends in the state by the state total incomes.
 The interaction term enables to examine whether the relationship between the target
 parameter (consumption) and the independent variable (exposure to the stock
-market) changes with the stock market crash.
+market) changes with the stock market crash thanks to the dummy $D_t$.
 Here, beta coefficient is the difference in slope between exposure before and 
 after the crash. In terms of interpretation, if the coefficient is different
-from zero, then we can assume had an impact on the way exposure of income
-to the stock market affected consumption.
-
+from zero, then we can assume the crash had an impact on the way exposure of to the stock 
+market affected consumption.
 A time fixed-effect is added to control for potential time trends, while the
 state fixed-effect should control for potential characteristics
 that are specific to states, that we do not observe.
@@ -120,9 +128,21 @@ These fixed-effects are designed to eliminate omitted variable bias by
 excluding unobserved variables that evolve over time or are specific
 to some states but are constant across entities.
 
-#Identification concerns: endogeneity (check Romer)
-#Exposure may not be constant over the analysed period.
-
+There might be several identification concerns regarding this regression.
+First, we know that the income data come from federal tax returns at a time 
+when only a small fraction of the population paid federal income tax. Thus,
+our sample would not be representative of the population (the representative 
+american consumer) and we would face a selection bias.
+Secondly, we have to consider possible issues related to our proxy;
+there could have been changes in car sales associated with neither 
+the crash nor the exposure to income, creating a potential ommitted variable bias.
+Thirdly, the wealth channel we observe might have a problem of endogeneity.
+As mentioned in Chodorow-Reich et al. (2021), stock prices are forward looking. This
+would mean that if agents anticipate a fall decline in future economic fundamentals, it
+lead to a fall in stock returns and spendings. In this case, the initial decrease in 
+consumption could worsen the anticipations and further decrease dividends.
+Finally, measurement errors can always be a concern, there might have been 
+mistakes during tax filings and fiscal evasion.
 
 
 ### 8. Regression (1)
