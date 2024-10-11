@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Packages and Environment
 
-```{r}
+```{r, results='hide'}
 library(openxlsx)
 library(tidyr)
 library(dplyr)
@@ -25,7 +25,7 @@ setwd("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History")
 
 ```
 
-##2.  Downlad the Excel files
+    ##2.  Downlad the Excel files
 
 ```{r}
 car = read.xlsx("StateNewCarRegistrations.xlsx")
@@ -35,7 +35,7 @@ head(car)
 head(stock)
 ```
 
-##3. Create a single dataset.
+    ##3. Create a single dataset.
 
 ```{r}
 car_long <- pivot_longer(car, #we start by pivoting the car dataset
@@ -56,7 +56,7 @@ head(dta3) #The dataset seems to corresponds to the exemple given.
 ```
 
 
-##4. Create a post-crash dummy
+    ##4. Create a post-crash dummy
 
 ```{r}
 dta4 <- dta3 %>%
@@ -64,7 +64,7 @@ dta4 <- dta3 %>%
 ```
 
 
-##5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
+    ##5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
 
 The xs should capture the direct impact of the exposure to the stock market 
 crash at the state level on consumption, being an appropriate measure
@@ -80,7 +80,14 @@ Interesting proxys for $x_s$ could be stock ownership rates at the state level o
 level wealth tied to the financial market.
 
 
-##6. Construct $x_s$ and explain the idea behind this measure:
+    ##6. Construct $x_s$ and explain the idea behind this measure:
+
+```{r}
+dta6 <- dta4 %>%
+  mutate (x = dividend_income / total_income)
+
+summary(dta6$x)
+```
 
 The idea behind this measure is to estimate the exposure of income to the
 stock market crash  by computing the share of total income due to dividends.
@@ -88,3 +95,48 @@ In other words, it should reflect the share of agents' income that depends on
 the stockmarket since the dividends corresponds to the reward of holdings assets.
 Thus, fluctuations in the stock market will affect dividends, which will in turn
 affect income and consumption.
+
+
+    ##7. 
+
+Reg (1): studies effect of stock market crash on consumption at state level by
+using state-level car sales as a proxy.
+$x_s$ (independent variable): captures the exposure of state incomes to 
+fluctuations in the stock market; computed by dividing the proportion of total
+income from dividends in the state by the state total incomes.
+The interaction term enables to examine whether the relationship between the target
+parameter (consumption) and the independent variable (exposure to the stock
+market) changes with the stock market crash.
+Here, beta coefficient is the difference in slope between exposure before and 
+after the crash. In terms of interpretation, if the coefficient is different
+from zero, then we can assume had an impact on the way exposure of income
+to the stock market affected consumption.
+
+A time fixed-effect is added to control for potential time trends, while the
+state fixed-effect should control for potential characteristics
+that are specific to states, that we do not observe.
+These fixed-effects are designed to eliminate omitted variable bias by 
+excluding unobserved variables that evolve over time or are specific
+to some states but are constant across entities.
+
+#Identification concerns: endogeneity (check Romer)
+#Exposure may not be constant over the analysed period.
+
+
+
+    ##8. Regression (1)
+
+```{r}
+dta8 = dta6 %>% #we prepare the data for regression
+  filter(year %in% c(1929, 1930)) %>% #keeping only observations from 1929 and 1930
+  mutate (log_car = log(car_sales)) %>% #create a variable for the log of car sales
+  mutate (time = as.Date(paste(year, as.numeric(month), "01", sep = "-"))) #
+
+#We use two regression methods:
+reg8_felm = felm(log_car ~ x*crash | time + state, data = dta8)
+summary(reg8_felm)
+
+reg8_feols = feols(log_car ~ x*crash | time + state, data = dta8)
+summary(reg8_feols)
+
+```{r}
