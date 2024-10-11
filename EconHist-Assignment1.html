@@ -1655,7 +1655,8 @@ library(dplyr)</code></pre>
 
 rm(list=ls())
 setwd(&quot;C:/Users/etien/OneDrive/Documents/GitHub/Econ-History&quot;)</code></pre>
-<pre><code>##2.  Downlad the Excel files</code></pre>
+<div id="downlad-the-excel-files" class="section level3">
+<h3>2. Downlad the Excel files</h3>
 <pre class="r"><code>car = read.xlsx(&quot;StateNewCarRegistrations.xlsx&quot;)
 stock = read.xlsx(&quot;stock_income.xlsx&quot;)
 
@@ -1671,7 +1672,9 @@ head(car)</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["state"],"name":[1],"type":["chr"],"align":["left"]},{"label":["capital_gains"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["dividend_income"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["total_income"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["nb_returns"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["population"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","_rn_":"1"},{"1":"AK","2":"NA","3":"NA","4":"NA","5":"NA","6":"NA","_rn_":"2"},{"1":"AZ","2":"6809589","3":"4835565","4":"66770720","5":"11527","6":"474000","_rn_":"3"},{"1":"AR","2":"3218488","3":"7764220","4":"88936786","5":"16660","6":"1944000","_rn_":"4"},{"1":"CA","2":"249109737","3":"262827381","4":"2060756201","5":"316738","6":"4556000","_rn_":"5"},{"1":"CO","2":"12360267","3":"27703012","4":"184367947","5":"31091","6":"1090000","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre><code>##3. Create a single dataset.</code></pre>
+</div>
+<div id="create-a-single-dataset." class="section level3">
+<h3>3. Create a single dataset.</h3>
 <pre class="r"><code>car_long &lt;- pivot_longer(car, #we start by pivoting the car dataset
                                cols = -c(month, year), 
                                names_to = &quot;state&quot;, 
@@ -1694,10 +1697,15 @@ head(dta3) #The dataset seems to corresponds to the exemple given.</code></pre>
 {"columns":[{"label":["state"],"name":[1],"type":["chr"],"align":["left"]},{"label":["capital_gains"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["dividend_income"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["total_income"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["nb_returns"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["population"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["month"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["year"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["car_sales"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"1","8":"1929","9":"1949"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"2","8":"1929","9":"1161"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"3","8":"1929","9":"1541"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"4","8":"1929","9":"4615"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"5","8":"1929","9":"3450"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"6","8":"1929","9":"3391"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre><code>##4. Create a post-crash dummy</code></pre>
+</div>
+<div id="create-a-post-crash-dummy" class="section level3">
+<h3>4. Create a post-crash dummy</h3>
 <pre class="r"><code>dta4 &lt;- dta3 %&gt;%
   mutate (crash = ifelse(year &lt; 1929 | (year == 1929 &amp; month &lt;= 10), 0, 1))</code></pre>
-<pre><code>##5.  In an ideal world, what should $x_s$ be if we&#39;re interested in the wealth channel of the crash?</code></pre>
+</div>
+<div id="in-an-ideal-world-what-should-x_s-be-if-were-interested-in-the-wealth-channel-of-the-crash" class="section level3">
+<h3>5. In an ideal world, what should <span class="math inline">\(x_s\)</span> be if we’re interested in the wealth
+channel of the crash?</h3>
 <p>The xs should capture the direct impact of the exposure to the stock
 market crash at the state level on consumption, being an appropriate
 measure of the exogenous variation in stock market exposure at the state
@@ -1710,7 +1718,10 @@ reflect exposure before the crash.</p>
 <p>Interesting proxys for <span class="math inline">\(x_s\)</span> could
 be stock ownership rates at the state level or state level wealth tied
 to the financial market.</p>
-<pre><code>##6. Construct $x_s$ and explain the idea behind this measure:</code></pre>
+</div>
+<div id="construct-x_s-and-explain-the-idea-behind-this-measure" class="section level3">
+<h3>6. Construct <span class="math inline">\(x_s\)</span> and explain
+the idea behind this measure:</h3>
 <pre class="r"><code>dta6 &lt;- dta4 %&gt;%
   mutate (x = dividend_income / total_income)
 
@@ -1723,8 +1734,10 @@ dividends. In other words, it should reflect the share of agents’ income
 that depends on the stockmarket since the dividends corresponds to the
 reward of holdings assets. Thus, fluctuations in the stock market will
 affect dividends, which will in turn affect income and consumption.</p>
-<pre><code>##7. Explain the idea behind the regression.
-What are the identification concerns.</code></pre>
+</div>
+<div id="explain-the-idea-behind-the-regression." class="section level3">
+<h3>7. Explain the idea behind the regression.</h3>
+<pre><code>What are the identification concerns.</code></pre>
 <p>Reg (1): studies effect of stock market crash on consumption at state
 level by using state-level car sales as a proxy. <span class="math inline">\(x_s\)</span> (independent variable) captures the
 exposure of state incomes to fluctuations in the stock market; computed
@@ -1745,7 +1758,9 @@ excluding unobserved variables that evolve over time or are specific to
 some states but are constant across entities.</p>
 <p>#Identification concerns: endogeneity (check Romer) #Exposure may not
 be constant over the analysed period.</p>
-<pre><code>##8. Regression (1)</code></pre>
+</div>
+<div id="regression-1" class="section level3">
+<h3>8. Regression (1)</h3>
 <pre class="r"><code>dta8 = dta6 %&gt;% #we prepare the data for regression
   filter(year %in% c(1929, 1930)) %&gt;% #keeping only observations from 1929 and 1930
   mutate (log_car = log(car_sales)) %&gt;% #create a variable for the log of car sales
@@ -1794,17 +1809,22 @@ reg8_felm = felm(log_car ~ x*crash | time + state, data = dta8)</code></pre>
 ## RMSE: 0.341664     Adj. R2: 0.929697
 ##                  Within R2: 0.012311</code></pre>
 <p>#Present and explain your results</p>
-<pre><code>##9. Assuming our measure of exposure to the stock market is the right one,
-would regression (1) be appropriate to capture the wealth channel of the crash?
+</div>
+<div id="assuming-our-measure-of-exposure-to-the-stock-market-is-the-right-one" class="section level3">
+<h3>9. Assuming our measure of exposure to the stock market is the right
+one,</h3>
+<pre><code>would regression (1) be appropriate to capture the wealth channel of the crash?
 Would it capture the uncertainty channel that Romer writes about?</code></pre>
 <p>#Reg (1) appropriate to capture wealth channel?</p>
 <p>#capture uncertainty channel (Romer)</p>
-<pre><code>##10. Potential problem of income data coming from federal tax returns:
-
-
-
-
-##11. BONUS: variant of (1)</code></pre>
+</div>
+<div id="potential-problem-of-income-data-coming-from-federal-tax-returns" class="section level3">
+<h3>10. Potential problem of income data coming from federal tax
+returns:</h3>
+</div>
+<div id="bonus-variant-of-1" class="section level3">
+<h3>11. BONUS: variant of (1)</h3>
+</div>
 
 
 

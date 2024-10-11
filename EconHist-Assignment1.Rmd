@@ -25,7 +25,7 @@ setwd("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History")
 
 ```
 
-### 2.  Downlad the Excel files
+### 2.  Download the Excel files
 
 ```{r}
 car = read.xlsx("StateNewCarRegistrations.xlsx")
@@ -66,18 +66,14 @@ dta4 <- dta3 %>%
 
 ### 5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
 
-The xs should capture the direct impact of the exposure to the stock market 
-crash at the state level on consumption, being an appropriate measure
-of the exogenous variation in stock market exposure at the state level. 
+The $x_s$ should capture the impact of the exposure to the stock market 
+crash at the state level on all the wealth of the households, being an appropriate measure
+of the exogenous variation in stock market exposure. But such exposure is difficult to measure,
+which is also why we use state-level data here.
 This variable would need to reflect the pre-crash financial exposure of each 
 state in a way that captures potential heterogeneous treatment effects from 
-the crash, but is also exogenous to consumption trends.
-
-In other words, there must be pre-treatment exogeneity; xs must reflect
-exposure before the crash.
-
-Interesting proxys for $x_s$ could be stock ownership rates at the state level or state
-level wealth tied to the financial market.
+the crash, but is also exogenous to consumption trends. There must be pre-treatment exogeneity;
+ $x_s$ must reflect exposure before the crash.
 
 
 ### 6. Construct $x_s$ and explain the idea behind this measure:
