@@ -97,7 +97,8 @@ Thus, fluctuations in the stock market will affect dividends, which will in turn
 affect income and consumption.
 
 
-    ##7. 
+    ##7. Explain the idea behind the regression.
+    What are the identification concerns.
 
 Reg (1): studies effect of stock market crash on consumption at state level by
 using state-level car sales as a proxy.

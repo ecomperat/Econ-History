@@ -1655,7 +1655,7 @@ library(dplyr)</code></pre>
 
 rm(list=ls())
 setwd(&quot;C:/Users/etien/OneDrive/Documents/GitHub/Econ-History&quot;)</code></pre>
-<p>##2. Downlad the Excel files</p>
+<pre><code>##2.  Downlad the Excel files</code></pre>
 <pre class="r"><code>car = read.xlsx(&quot;StateNewCarRegistrations.xlsx&quot;)
 stock = read.xlsx(&quot;stock_income.xlsx&quot;)
 
@@ -1671,7 +1671,7 @@ head(car)</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["state"],"name":[1],"type":["chr"],"align":["left"]},{"label":["capital_gains"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["dividend_income"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["total_income"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["nb_returns"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["population"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","_rn_":"1"},{"1":"AK","2":"NA","3":"NA","4":"NA","5":"NA","6":"NA","_rn_":"2"},{"1":"AZ","2":"6809589","3":"4835565","4":"66770720","5":"11527","6":"474000","_rn_":"3"},{"1":"AR","2":"3218488","3":"7764220","4":"88936786","5":"16660","6":"1944000","_rn_":"4"},{"1":"CA","2":"249109737","3":"262827381","4":"2060756201","5":"316738","6":"4556000","_rn_":"5"},{"1":"CO","2":"12360267","3":"27703012","4":"184367947","5":"31091","6":"1090000","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>##3. Create a single dataset.</p>
+<pre><code>##3. Create a single dataset.</code></pre>
 <pre class="r"><code>car_long &lt;- pivot_longer(car, #we start by pivoting the car dataset
                                cols = -c(month, year), 
                                names_to = &quot;state&quot;, 
@@ -1694,11 +1694,10 @@ head(dta3) #The dataset seems to corresponds to the exemple given.</code></pre>
 {"columns":[{"label":["state"],"name":[1],"type":["chr"],"align":["left"]},{"label":["capital_gains"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["dividend_income"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["total_income"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["nb_returns"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["population"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["month"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["year"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["car_sales"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"1","8":"1929","9":"1949"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"2","8":"1929","9":"1161"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"3","8":"1929","9":"1541"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"4","8":"1929","9":"4615"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"5","8":"1929","9":"3450"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"6","8":"1929","9":"3391"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>##4. Create a post-crash dummy</p>
+<pre><code>##4. Create a post-crash dummy</code></pre>
 <pre class="r"><code>dta4 &lt;- dta3 %&gt;%
   mutate (crash = ifelse(year &lt; 1929 | (year == 1929 &amp; month &lt;= 10), 0, 1))</code></pre>
-<p>##5. In an ideal world, what should <span class="math inline">\(x_s\)</span> be if we’re interested in the wealth
-channel of the crash?</p>
+<pre><code>##5.  In an ideal world, what should $x_s$ be if we&#39;re interested in the wealth channel of the crash?</code></pre>
 <p>The xs should capture the direct impact of the exposure to the stock
 market crash at the state level on consumption, being an appropriate
 measure of the exogenous variation in stock market exposure at the state
@@ -1711,14 +1710,100 @@ reflect exposure before the crash.</p>
 <p>Interesting proxys for <span class="math inline">\(x_s\)</span> could
 be stock ownership rates at the state level or state level wealth tied
 to the financial market.</p>
-<p>##6. Construct <span class="math inline">\(x_s\)</span> and explain
-the idea behind this measure:</p>
+<pre><code>##6. Construct $x_s$ and explain the idea behind this measure:</code></pre>
+<pre class="r"><code>dta6 &lt;- dta4 %&gt;%
+  mutate (x = dividend_income / total_income)
+
+summary(dta6$x)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## 0.04257 0.08975 0.12748 0.13285 0.15957 0.39884</code></pre>
 <p>The idea behind this measure is to estimate the exposure of income to
 the stock market crash by computing the share of total income due to
 dividends. In other words, it should reflect the share of agents’ income
 that depends on the stockmarket since the dividends corresponds to the
 reward of holdings assets. Thus, fluctuations in the stock market will
 affect dividends, which will in turn affect income and consumption.</p>
+<pre><code>##7. </code></pre>
+<p>Reg (1): studies effect of stock market crash on consumption at state
+level by using state-level car sales as a proxy. <span class="math inline">\(x_s\)</span> (independent variable) captures the
+exposure of state incomes to fluctuations in the stock market; computed
+by dividing the proportion of total income from dividends in the state
+by the state total incomes. The interaction term enables to examine
+whether the relationship between the target parameter (consumption) and
+the independent variable (exposure to the stock market) changes with the
+stock market crash. Here, beta coefficient is the difference in slope
+between exposure before and after the crash. In terms of interpretation,
+if the coefficient is different from zero, then we can assume had an
+impact on the way exposure of income to the stock market affected
+consumption.</p>
+<p>A time fixed-effect is added to control for potential time trends,
+while the state fixed-effect should control for potential
+characteristics that are specific to states, that we do not observe.
+These fixed-effects are designed to eliminate omitted variable bias by
+excluding unobserved variables that evolve over time or are specific to
+some states but are constant across entities.</p>
+<p>#Identification concerns: endogeneity (check Romer) #Exposure may not
+be constant over the analysed period.</p>
+<pre><code>##8. Regression (1)</code></pre>
+<pre class="r"><code>dta8 = dta6 %&gt;% #we prepare the data for regression
+  filter(year %in% c(1929, 1930)) %&gt;% #keeping only observations from 1929 and 1930
+  mutate (log_car = log(car_sales)) %&gt;% #create a variable for the log of car sales
+  mutate (time = as.Date(paste(year, as.numeric(month), &quot;01&quot;, sep = &quot;-&quot;))) #
+
+#We use two regression methods:
+reg8_felm = felm(log_car ~ x*crash | time + state, data = dta8)</code></pre>
+<pre><code>## Warning in chol.default(mat, pivot = TRUE, tol = tol): the matrix is either
+## rank-deficient or not positive definite</code></pre>
+<pre class="r"><code>summary(reg8_felm)</code></pre>
+<pre><code>## Warning in chol.default(mat, pivot = TRUE, tol = tol): the matrix is either
+## rank-deficient or not positive definite</code></pre>
+<pre><code>## 
+## Call:
+##    felm(formula = log_car ~ x * crash | time + state, data = dta8) 
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.0808 -0.1803  0.0009  0.1748  1.7951 
+## 
+## Coefficients:
+##         Estimate Std. Error t value Pr(&gt;|t|)    
+## x            NaN         NA     NaN      NaN    
+## crash        NaN         NA     NaN      NaN    
+## x:crash    1.311      0.350   3.746 0.000189 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.3527 on 1126 degrees of freedom
+## Multiple R-squared(full model): 0.934   Adjusted R-squared: 0.9297 
+## Multiple R-squared(proj model): 0.01231   Adjusted R-squared: -0.05172 
+## F-statistic(full model):218.2 on 73 and 1126 DF, p-value: &lt; 2.2e-16 
+## F-statistic(proj model): 4.678 on 3 and 1126 DF, p-value: 0.002968</code></pre>
+<pre class="r"><code>reg8_feols = feols(log_car ~ x*crash | time + state, data = dta8)</code></pre>
+<pre><code>## The variables &#39;x&#39; and &#39;crash&#39; have been removed because of collinearity (see $collin.var).</code></pre>
+<pre class="r"><code>summary(reg8_feols)</code></pre>
+<pre><code>## OLS estimation, Dep. Var.: log_car
+## Observations: 1,200
+## Fixed-effects: time: 24,  state: 50
+## Standard-errors: Clustered (time) 
+##         Estimate Std. Error t value Pr(&gt;|t|)    
+## x:crash  1.31128   0.699268 1.87522 0.073515 .  
+## ... 2 variables were removed because of collinearity (x and crash)
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## RMSE: 0.341664     Adj. R2: 0.929697
+##                  Within R2: 0.012311</code></pre>
+<p>#Present and explain your results</p>
+<pre><code>##9. Assuming our measure of exposure to the stock market is the right one,
+would regression (1) be appropriate to capture the wealth channel of the crash?
+Would it capture the uncertainty channel that Romer writes about?</code></pre>
+<p>#Reg (1) appropriate to capture wealth channel?</p>
+<p>#capture uncertainty channel (Romer)</p>
+<pre><code>##10. Potential problem of income data coming from federal tax returns:
+
+
+
+
+##11. BONUS: variant of (1)</code></pre>
 
 
 
