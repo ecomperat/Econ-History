@@ -71,18 +71,40 @@ dta6 <- dta4 %>%
 
 summary(dta6$x)
 
-# The idea behind this measure is to estimate the exposure to the stock market
-# crash  by computing the share of total income due to dividends. In other words,
-# it should reflect the share of agents' income that depends on the stock 
-# market since the dividends corresponds to the reward of holdings assets. Thus, 
-# fluctuations in the stock market will affect dividends, which will in turn
+# The idea behind this measure is to estimate the exposure of income to the
+# stock market crash  by computing the share of total income due to dividends.
+# In other words, it should reflect the share of agents' income that depends on 
+# the stockmarket since the dividends corresponds to the reward of holdings assets.
+# Thus, fluctuations in the stock market will affect dividends, which will in turn
 # affect income and consumption.
 
 
 
   ##7. Explain the idea behind regression (1), what are the identification concerns?
-# Reg (1): study effect of stock market crash on consumption at state level by
-# car sales as a proxy
+
+# Reg (1): studies effect of stock market crash on consumption at state level by
+# using state-level car sales as a proxy.
+# $x_s$ (independent variable): captures the exposure of state incomes to 
+# fluctuations in the stock market; computed by dividing the proportion of total
+# income from dividends in the state by the state total incomes.
+# The interaction term enables to examine whether the relationship between the target
+# parameter (consumption) and the independent variable (exposure to the stock
+# market) changes with the stock market crash.
+# Here, beta coefficient is the difference in slope between exposure before and 
+# after the crash. In terms of interpretation, if the coefficient is different
+# from zero, then we can assume had an impact on the way exposure of income
+# to the stock market affected consumption.
+#
+#
+# A time fixed-effect is added to control for potential time trends, while the
+# state fixed-effect should control for potential characteristics
+# that are specific to states, that we do not observe.
+# These fixed-effects are designed to eliminate omitted variable bias by 
+# excluding unobserved variables that evolve over time or are specific
+# to some states but are constant across entities.
+#
+#Identification concerns: endogeneity (check Romer)
+# Exposure may not be constant over the analysed period.
 
 
   
