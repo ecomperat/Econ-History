@@ -18,6 +18,7 @@ library(tidyr)
 library(dplyr)
 library(lfe)
 library(fixest)
+library(jsonlite)
 
 rm(list=ls())
 setwd("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History")
@@ -75,5 +76,15 @@ the crash, but is also exogenous to consumption trends.
 In other words, there must be pre-treatment exogeneity; xs must reflect
 exposure before the crash.
 
-Interesting proxys could be stock ownership rates at the state level or state
+Interesting proxys for $x_s$ could be stock ownership rates at the state level or state
 level wealth tied to the financial market.
+
+
+##6. Construct $x_s$ and explain the idea behind this measure:
+
+The idea behind this measure is to estimate the exposure of income to the
+stock market crash  by computing the share of total income due to dividends.
+In other words, it should reflect the share of agents' income that depends on 
+the stockmarket since the dividends corresponds to the reward of holdings assets.
+Thus, fluctuations in the stock market will affect dividends, which will in turn
+affect income and consumption.
