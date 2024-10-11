@@ -101,7 +101,7 @@ affect income and consumption.
 
 Reg (1): studies effect of stock market crash on consumption at state level by
 using state-level car sales as a proxy.
-$x_s$ (independent variable): captures the exposure of state incomes to 
+$x_s$ (independent variable) captures the exposure of state incomes to 
 fluctuations in the stock market; computed by dividing the proportion of total
 income from dividends in the state by the state total incomes.
 The interaction term enables to examine whether the relationship between the target
@@ -138,5 +138,25 @@ summary(reg8_felm)
 
 reg8_feols = feols(log_car ~ x*crash | time + state, data = dta8)
 summary(reg8_feols)
+```
 
-```{r}
+#Present and explain your results
+
+
+
+    ##9. Assuming our measure of exposure to the stock market is the right one,
+    would regression (1) be appropriate to capture the wealth channel of the crash?
+    Would it capture the uncertainty channel that Romer writes about?
+
+#Reg (1) appropriate to capture wealth channel?
+
+#capture uncertainty channel (Romer)
+
+
+
+    ##10. Potential problem of income data coming from federal tax returns:
+
+
+
+
+    ##11. BONUS: variant of (1)
