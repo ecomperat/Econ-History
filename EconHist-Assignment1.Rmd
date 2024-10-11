@@ -25,7 +25,7 @@ setwd("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History")
 
 ```
 
-    ##2.  Downlad the Excel files
+### 2.  Downlad the Excel files
 
 ```{r}
 car = read.xlsx("StateNewCarRegistrations.xlsx")
@@ -35,7 +35,7 @@ head(car)
 head(stock)
 ```
 
-    ##3. Create a single dataset.
+### 3. Create a single dataset.
 
 ```{r}
 car_long <- pivot_longer(car, #we start by pivoting the car dataset
@@ -56,7 +56,7 @@ head(dta3) #The dataset seems to corresponds to the exemple given.
 ```
 
 
-    ##4. Create a post-crash dummy
+### 4. Create a post-crash dummy
 
 ```{r}
 dta4 <- dta3 %>%
@@ -64,7 +64,7 @@ dta4 <- dta3 %>%
 ```
 
 
-    ##5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
+### 5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
 
 The xs should capture the direct impact of the exposure to the stock market 
 crash at the state level on consumption, being an appropriate measure
@@ -80,7 +80,7 @@ Interesting proxys for $x_s$ could be stock ownership rates at the state level o
 level wealth tied to the financial market.
 
 
-    ##6. Construct $x_s$ and explain the idea behind this measure:
+### 6. Construct $x_s$ and explain the idea behind this measure:
 
 ```{r}
 dta6 <- dta4 %>%
@@ -97,7 +97,7 @@ Thus, fluctuations in the stock market will affect dividends, which will in turn
 affect income and consumption.
 
 
-    ##7. Explain the idea behind the regression.
+### 7. Explain the idea behind the regression.
     What are the identification concerns.
 
 Reg (1): studies effect of stock market crash on consumption at state level by
@@ -125,7 +125,7 @@ to some states but are constant across entities.
 
 
 
-    ##8. Regression (1)
+### 8. Regression (1)
 
 ```{r}
 dta8 = dta6 %>% #we prepare the data for regression
@@ -145,7 +145,7 @@ summary(reg8_feols)
 
 
 
-    ##9. Assuming our measure of exposure to the stock market is the right one,
+### 9. Assuming our measure of exposure to the stock market is the right one,
     would regression (1) be appropriate to capture the wealth channel of the crash?
     Would it capture the uncertainty channel that Romer writes about?
 
@@ -155,9 +155,9 @@ summary(reg8_feols)
 
 
 
-    ##10. Potential problem of income data coming from federal tax returns:
+### 10. Potential problem of income data coming from federal tax returns:
 
 
 
 
-    ##11. BONUS: variant of (1)
+### 11. BONUS: variant of (1)
