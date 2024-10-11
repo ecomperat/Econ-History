@@ -1627,6 +1627,98 @@ display: none;
 
 
 <p>Packages and Environment</p>
+<pre class="r"><code>library(openxlsx)
+library(tidyr)
+library(dplyr)</code></pre>
+<pre><code>## 
+## Attachement du package : &#39;dplyr&#39;</code></pre>
+<pre><code>## Les objets suivants sont masqués depuis &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## Les objets suivants sont masqués depuis &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="r"><code>library(lfe)</code></pre>
+<pre><code>## Le chargement a nécessité le package : Matrix</code></pre>
+<pre><code>## 
+## Attachement du package : &#39;Matrix&#39;</code></pre>
+<pre><code>## Les objets suivants sont masqués depuis &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<pre class="r"><code>library(fixest)</code></pre>
+<pre><code>## 
+## Attachement du package : &#39;fixest&#39;</code></pre>
+<pre><code>## L&#39;objet suivant est masqué depuis &#39;package:lfe&#39;:
+## 
+##     fepois</code></pre>
+<pre class="r"><code>library(jsonlite)
+
+rm(list=ls())
+setwd(&quot;C:/Users/etien/OneDrive/Documents/GitHub/Econ-History&quot;)</code></pre>
+<p>##2. Downlad the Excel files</p>
+<pre class="r"><code>car = read.xlsx(&quot;StateNewCarRegistrations.xlsx&quot;)
+stock = read.xlsx(&quot;stock_income.xlsx&quot;)
+
+head(car)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["month"],"name":[1],"type":["chr"],"align":["left"]},{"label":["year"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["AL"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["AZ"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["AR"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["CA"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["CO"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["CT"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["DE"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["FL"],"name":[10],"type":["dbl"],"align":["right"]},{"label":["GA"],"name":[11],"type":["dbl"],"align":["right"]},{"label":["ID"],"name":[12],"type":["dbl"],"align":["right"]},{"label":["IL"],"name":[13],"type":["dbl"],"align":["right"]},{"label":["IN"],"name":[14],"type":["dbl"],"align":["right"]},{"label":["IA"],"name":[15],"type":["dbl"],"align":["right"]},{"label":["KS"],"name":[16],"type":["dbl"],"align":["right"]},{"label":["KY"],"name":[17],"type":["dbl"],"align":["right"]},{"label":["LA"],"name":[18],"type":["dbl"],"align":["right"]},{"label":["ME"],"name":[19],"type":["dbl"],"align":["right"]},{"label":["MD"],"name":[20],"type":["dbl"],"align":["right"]},{"label":["MA"],"name":[21],"type":["dbl"],"align":["right"]},{"label":["MI"],"name":[22],"type":["dbl"],"align":["right"]},{"label":["MN"],"name":[23],"type":["dbl"],"align":["right"]},{"label":["MS"],"name":[24],"type":["dbl"],"align":["right"]},{"label":["MO"],"name":[25],"type":["dbl"],"align":["right"]},{"label":["MT"],"name":[26],"type":["dbl"],"align":["right"]},{"label":["NE"],"name":[27],"type":["dbl"],"align":["right"]},{"label":["NV"],"name":[28],"type":["dbl"],"align":["right"]},{"label":["NH"],"name":[29],"type":["dbl"],"align":["right"]},{"label":["NJ"],"name":[30],"type":["dbl"],"align":["right"]},{"label":["NM"],"name":[31],"type":["dbl"],"align":["right"]},{"label":["NY"],"name":[32],"type":["dbl"],"align":["right"]},{"label":["NC"],"name":[33],"type":["dbl"],"align":["right"]},{"label":["ND"],"name":[34],"type":["dbl"],"align":["right"]},{"label":["OH"],"name":[35],"type":["dbl"],"align":["right"]},{"label":["OK"],"name":[36],"type":["dbl"],"align":["right"]},{"label":["OR"],"name":[37],"type":["dbl"],"align":["right"]},{"label":["PA"],"name":[38],"type":["dbl"],"align":["right"]},{"label":["RI"],"name":[39],"type":["dbl"],"align":["right"]},{"label":["SC"],"name":[40],"type":["dbl"],"align":["right"]},{"label":["SD"],"name":[41],"type":["dbl"],"align":["right"]},{"label":["TN"],"name":[42],"type":["dbl"],"align":["right"]},{"label":["TX"],"name":[43],"type":["dbl"],"align":["right"]},{"label":["UT"],"name":[44],"type":["dbl"],"align":["right"]},{"label":["VT"],"name":[45],"type":["dbl"],"align":["right"]},{"label":["VA"],"name":[46],"type":["dbl"],"align":["right"]},{"label":["WA"],"name":[47],"type":["dbl"],"align":["right"]},{"label":["WV"],"name":[48],"type":["dbl"],"align":["right"]},{"label":["WI"],"name":[49],"type":["dbl"],"align":["right"]},{"label":["WY"],"name":[50],"type":["dbl"],"align":["right"]},{"label":["DC"],"name":[51],"type":["dbl"],"align":["right"]},{"label":["Total"],"name":[52],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1934","3":"676","4":"196","5":"581","6":"4603","7":"1534","8":"620","9":"141","10":"1413","11":"1271","12":"275","13":"3679","14":"1804","15":"1107","16":"1794","17":"645","18":"894","19":"213","20":"698","21":"1914","22":"4263","23":"977","24":"282","25":"1182","26":"200","27":"1155","28":"157","29":"90","30":"1747","31":"211","32":"6350","33":"1400","34":"177","35":"4133","36":"1438","37":"531","38":"3474","39":"195","40":"540","41":"217","42":"732","43":"3390","44":"229","45":"74","46":"943","47":"857","48":"504","49":"994","50":"178","51":"564","52":"61242","_rn_":"1"},{"1":"1","2":"1933","3":"625","4":"183","5":"1536","6":"5984","7":"1175","8":"923","9":"241","10":"1555","11":"632","12":"141","13":"5909","14":"2812","15":"1078","16":"682","17":"1507","18":"1235","19":"346","20":"1387","21":"2782","22":"4632","23":"1333","24":"368","25":"1296","26":"69","27":"807","28":"120","29":"171","30":"3047","31":"256","32":"11273","33":"1502","34":"164","35":"4817","36":"1547","37":"362","38":"4727","39":"367","40":"625","41":"278","42":"1293","43":"4661","44":"225","45":"138","46":"1209","47":"895","48":"763","49":"1134","50":"185","51":"848","52":"79845","_rn_":"2"},{"1":"1","2":"1932","3":"732","4":"206","5":"1594","6":"6830","7":"2095","8":"1041","9":"255","10":"1713","11":"1798","12":"214","13":"5164","14":"2483","15":"1111","16":"1080","17":"1041","18":"950","19":"430","20":"1292","21":"3135","22":"4137","23":"1270","24":"437","25":"1561","26":"108","27":"1149","28":"89","29":"261","30":"4450","31":"249","32":"10760","33":"1231","34":"267","35":"4407","36":"1439","37":"600","38":"6325","39":"319","40":"644","41":"290","42":"1110","43":"4119","44":"264","45":"167","46":"2462","47":"1163","48":"728","49":"2236","50":"251","51":"1136","52":"87490","_rn_":"3"},{"1":"1","2":"1931","3":"877","4":"423","5":"1249","6":"12379","7":"2343","8":"1337","9":"291","10":"3282","11":"2455","12":"549","13":"9356","14":"3772","15":"2679","16":"3259","17":"2055","18":"1261","19":"303","20":"1609","21":"3638","22":"5993","23":"2361","24":"475","25":"1983","26":"767","27":"3183","28":"190","29":"111","30":"8059","31":"563","32":"10515","33":"1616","34":"547","35":"6723","36":"3029","37":"1354","38":"6407","39":"312","40":"1012","41":"1133","42":"1592","43":"6099","44":"306","45":"140","46":"1634","47":"2302","48":"924","49":"2892","50":"240","51":"1207","52":"126788","_rn_":"4"},{"1":"1","2":"1930","3":"2860","4":"872","5":"2555","6":"13902","7":"4154","8":"1564","9":"441","10":"3672","11":"2540","12":"715","13":"12555","14":"5482","15":"3851","16":"1936","17":"2828","18":"2947","19":"214","20":"2298","21":"3997","22":"9913","23":"2581","24":"1459","25":"2808","26":"1072","27":"4603","28":"343","29":"127","30":"8067","31":"517","32":"11497","33":"2837","34":"701","35":"10953","36":"3933","37":"963","38":"9447","39":"379","40":"2956","41":"1961","42":"4819","43":"13241","44":"690","45":"222","46":"3954","47":"3379","48":"1493","49":"4407","50":"427","51":"962","52":"179096","_rn_":"5"},{"1":"1","2":"1929","3":"1949","4":"1301","5":"4234","6":"18567","7":"5647","8":"1747","9":"282","10":"2407","11":"2816","12":"952","13":"14813","14":"6210","15":"3830","16":"3034","17":"3914","18":"2946","19":"273","20":"2565","21":"4884","22":"12581","23":"3082","24":"1872","25":"3791","26":"1556","27":"6037","28":"446","29":"82","30":"5022","31":"606","32":"15409","33":"5972","34":"1540","35":"14220","36":"6458","37":"3442","38":"12184","39":"596","40":"3124","41":"2843","42":"5450","43":"14724","44":"975","45":"194","46":"3487","47":"3810","48":"1692","49":"4461","50":"596","51":"982","52":"219645","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>head(stock)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["state"],"name":[1],"type":["chr"],"align":["left"]},{"label":["capital_gains"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["dividend_income"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["total_income"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["nb_returns"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["population"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","_rn_":"1"},{"1":"AK","2":"NA","3":"NA","4":"NA","5":"NA","6":"NA","_rn_":"2"},{"1":"AZ","2":"6809589","3":"4835565","4":"66770720","5":"11527","6":"474000","_rn_":"3"},{"1":"AR","2":"3218488","3":"7764220","4":"88936786","5":"16660","6":"1944000","_rn_":"4"},{"1":"CA","2":"249109737","3":"262827381","4":"2060756201","5":"316738","6":"4556000","_rn_":"5"},{"1":"CO","2":"12360267","3":"27703012","4":"184367947","5":"31091","6":"1090000","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>##3. Create a single dataset.</p>
+<pre class="r"><code>car_long &lt;- pivot_longer(car, #we start by pivoting the car dataset
+                               cols = -c(month, year), 
+                               names_to = &quot;state&quot;, 
+                               values_to = &quot;car_sales&quot;)
+head(car_long)</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["month"],"name":[1],"type":["chr"],"align":["left"]},{"label":["year"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["state"],"name":[3],"type":["chr"],"align":["left"]},{"label":["car_sales"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1934","3":"AL","4":"676"},{"1":"1","2":"1934","3":"AZ","4":"196"},{"1":"1","2":"1934","3":"AR","4":"581"},{"1":"1","2":"1934","3":"CA","4":"4603"},{"1":"1","2":"1934","3":"CO","4":"1534"},{"1":"1","2":"1934","3":"CT","4":"620"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<pre class="r"><code>dta3 &lt;- merge(stock, car_long, by = &quot;state&quot;, all.x = TRUE)%&gt;%
+  filter(!is.na(year)) %&gt;% #We merge both datasets by state, filter for NAs (and remove the &quot;total&quot; observations)
+  group_by(state)%&gt;% #We group observations by state
+  mutate(month = as.numeric(month)) %&gt;% #We turn the class of month from character to numeric
+  arrange(year, month, .by_group = TRUE) #This allows us to arrange observations by year and month within state groups
+
+head(dta3) #The dataset seems to corresponds to the exemple given.</code></pre>
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["state"],"name":[1],"type":["chr"],"align":["left"]},{"label":["capital_gains"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["dividend_income"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["total_income"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["nb_returns"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["population"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["month"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["year"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["car_sales"],"name":[9],"type":["dbl"],"align":["right"]}],"data":[{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"1","8":"1929","9":"1949"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"2","8":"1929","9":"1161"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"3","8":"1929","9":"1541"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"4","8":"1929","9":"4615"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"5","8":"1929","9":"3450"},{"1":"AL","2":"9440722","3":"15540573","4":"166639611","5":"26891","6":"2573000","7":"6","8":"1929","9":"3391"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>##4. Create a post-crash dummy</p>
+<pre class="r"><code>dta4 &lt;- dta3 %&gt;%
+  mutate (crash = ifelse(year &lt; 1929 | (year == 1929 &amp; month &lt;= 10), 0, 1))</code></pre>
+<p>##5. In an ideal world, what should <span class="math inline">\(x_s\)</span> be if we’re interested in the wealth
+channel of the crash?</p>
+<p>The xs should capture the direct impact of the exposure to the stock
+market crash at the state level on consumption, being an appropriate
+measure of the exogenous variation in stock market exposure at the state
+level. This variable would need to reflect the pre-crash financial
+exposure of each state in a way that captures potential heterogeneous
+treatment effects from the crash, but is also exogenous to consumption
+trends.</p>
+<p>In other words, there must be pre-treatment exogeneity; xs must
+reflect exposure before the crash.</p>
+<p>Interesting proxys for <span class="math inline">\(x_s\)</span> could
+be stock ownership rates at the state level or state level wealth tied
+to the financial market.</p>
+<p>##6. Construct <span class="math inline">\(x_s\)</span> and explain
+the idea behind this measure:</p>
+<p>The idea behind this measure is to estimate the exposure of income to
+the stock market crash by computing the share of total income due to
+dividends. In other words, it should reflect the share of agents’ income
+that depends on the stockmarket since the dividends corresponds to the
+reward of holdings assets. Thus, fluctuations in the stock market will
+affect dividends, which will in turn affect income and consumption.</p>
 
 
 
