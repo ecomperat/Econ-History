@@ -1,0 +1,79 @@
+---
+title: "Assignment 1 - Economic History"
+output:
+  html_document:
+    df_print: paged
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Packages and Environment
+
+```{r}
+library(openxlsx)
+library(tidyr)
+library(dplyr)
+library(lfe)
+library(fixest)
+
+rm(list=ls())
+setwd("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History")
+
+```
+
+##2.  Downlad the Excel files
+
+````{r}
+car = read.xlsx("StateNewCarRegistrations.xlsx")
+stock = read.xlsx("stock_income.xlsx")
+
+head(car)
+head(stock)
+````
+
+##3. Create a single dataset.
+
+```{r}
+car_long <- pivot_longer(car, #we start by pivoting the car dataset
+                               cols = -c(month, year), 
+                               names_to = "state", 
+                               values_to = "car_sales")
+head(car_long)
+
+
+
+dta3 <- merge(stock, car_long, by = "state", all.x = TRUE)%>%
+  filter(!is.na(year)) %>% #We merge both datasets by state, filter for NAs (and remove the "total" observations)
+  group_by(state)%>% #We group observations by state
+  mutate(month = as.numeric(month)) %>% #We turn the class of month from character to numeric
+  arrange(year, month, .by_group = TRUE) #This allows us to arrange observations by year and month within state groups
+
+head(dta3) #The dataset seems to corresponds to the exemple given.
+```
+
+
+##4. Create a post-crash dummy
+
+```{r}
+dta4 <- dta3 %>%
+  mutate (crash = ifelse(year < 1929 | (year == 1929 & month <= 10), 0, 1))
+````
+
+
+##5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
+
+The xs should capture the direct impact of the exposure to the stock market 
+crash at the state level on consumption, being an appropriate measure
+of the exogenous variation in stock market exposure at the state level. 
+This variable would need to reflect the pre-crash financial exposure of each 
+state in a way that captures potential heterogeneous treatment effects from 
+the crash, but is also exogenous to consumption trends.
+
+In other words, there must be pre-treatment exogeneity; xs must reflect
+exposure before the crash.
+
+Interesting proxys could be stock ownership rates at the state level or state
+level wealth tied to the financial market.

@@ -114,7 +114,6 @@ dta8 = dta6 %>%
   filter(year %in% c(1929, 1930)) %>%
   mutate (log_car = log(car_sales)) %>%
   mutate (time = as.Date(paste(year, as.numeric(month), "01", sep = "-")))
-
 library(lfe)
 library(fixest)
 
