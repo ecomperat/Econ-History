@@ -27,13 +27,13 @@ setwd("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History")
 
 ##2.  Downlad the Excel files
 
-````{r}
+```{r}
 car = read.xlsx("StateNewCarRegistrations.xlsx")
 stock = read.xlsx("stock_income.xlsx")
 
 head(car)
 head(stock)
-````
+```
 
 ##3. Create a single dataset.
 
@@ -61,7 +61,7 @@ head(dta3) #The dataset seems to corresponds to the exemple given.
 ```{r}
 dta4 <- dta3 %>%
   mutate (crash = ifelse(year < 1929 | (year == 1929 & month <= 10), 0, 1))
-````
+```
 
 
 ##5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
