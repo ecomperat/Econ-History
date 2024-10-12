@@ -1,6 +1,7 @@
 ---
 title: "Assignment 1 - Economic History"
 output:
+  pdf_document: default
   html_document:
     df_print: paged
 date: "`r Sys.Date()`"
