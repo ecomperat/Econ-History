@@ -142,4 +142,13 @@ summary(reg8_bis)
     ##10.
 
     ##11.
+dta11 <- dta8 %>%
+  mutate(
+    # Create a month-year string for easier handling (e.g., "1929-01", "1930-12")
+    month_year = paste(year, sprintf("%02d", month), sep = "-")
+  ) %>%
+  filter(month_year != "1929-10") %>%  # Remove October 1929
+  mutate(MD = as.factor(month_year))
 
+reg11 <- feols(log_car ~ x * MD | time + state, data = dta11)
+summary(reg11)
