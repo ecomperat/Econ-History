@@ -72,7 +72,7 @@ This would allow us to estimate the exposure of wealth to the stock market fluct
 study the impact of the crash on consumption through this "wealth channel".
 This way, the $x_s$ would be an appropriate measure of the exogenous variation in stock market exposure.
 Note that having data at the household level might be more relevant if we want to observe the consumption
-of the representative american household (state level aggregate data might overestimate the size of stock
+of the representative American household (state level aggregate data might overestimate the size of stock
 market wealth in their portfolio).
 
 
@@ -130,10 +130,13 @@ There might be several identification concerns regarding this regression.
 First, we know that the income data come from federal tax returns at a time 
 when only a small fraction of the population paid federal income tax. Thus,
 our sample would not be representative of the population (the representative 
-american consumer) and we would face a selection bias.
+American consumer) and we would face a selection bias.
 Secondly, we have to consider possible issues related to our proxy;
 there could have been changes in car sales associated with neither 
 the crash nor the exposure to income, creating a potential ommitted variable bias.
+Moreover, if car sales work effectively as good proxy, we must assume that the decline in consumption during the Great Depression
+is strongly correlated with the decline in car sales such that the wealth effect is the only channel through
+which the crash would have affected car sales (exclusion restriction).
 Thirdly, the wealth channel we observe might have a problem of endogeneity.
 As mentioned in Chodorow-Reich et al. (2021), stock prices are forward looking. This
 would mean that if agents anticipate a fall decline in future economic fundamentals, it
@@ -166,7 +169,7 @@ $\beta$ mesures whether the effect of state's exposure to the stock market on co
 Here we find the same coefficient across both regression such that $\beta = 1.311$. We could interprete
 it as: the effect of exposure to the stock market on car consumption would have increased 
 after the stock market crash. However, we get from reg8_feols that our coefficient is not statistically
-significant, which prevents us from concluding that the crash had any effect on consumption through
+significant, thus our first results might not be robust, which prevents us from concluding that the crash had any effect on consumption through
 the wealth channel described in Chodorow-Reich et al. (2021).
 For comparison, in Temin (1976), the author found there was an actual effect of the crash and drop in consumers'
 spendings but that it was fairly small.
@@ -185,7 +188,7 @@ The wealth channel refers to the effect of the crash on households' wealth, whic
 Assuming our measure of exposure is the right one and if consider we car sales (a durable good) to be a good
 proxy for consumption, we might think this regression is appropriate to capture the wealth channel of the crash, 
 keeping in mind we operate at the state level.
-However, it is still difficult to disentengle the fall  in consumption due to wealth exposure to the 
+However, it is still difficult to disentangle the fall  in consumption due to wealth exposure to the 
 stock market and to uncertainty. Indeed, as described in Chodorow-Reich et al. (2021), the main challenge when 
 studying the wealth channel is that stock prices are forward-looking.  As a result, agents might decide to cut 
 spendings not because of  wealth destruction but because they anticipate a "negative stock return and 
@@ -205,11 +208,14 @@ but it is not specifically designed to measure this channel.
 
 As we mentioned earlier, having only 5% of the population paying federal income tax in this
 period might create a strong selection bias, as those paying these taxes might not be representative
-of the average american consumer. In Temin (1976), the wealth effect is estimated to be fairly small,
+of the average American consumer. In Temin (1976), the wealth effect is estimated to be fairly small,
 one pf the reason being that stock prices only represented a small fraction of total wealth (and was 
 more likely to be detained by richer households). Here we might overestimate the fraction of wealth 
 tied to the stock market.
 
+However, we might nuance our problem by mentioning the fact that high incomes might have been more likely to report earnings accurately,
+which are also households more likely to own stock. Thus, while not representative of the population, the sample could still 
+be appropriate for investigating an asset-based wealth channel when focusing on those who own these assets.
 
 ### 11. BONUS: variant of (1)
 
@@ -227,3 +233,5 @@ reg11 <- feols(log_car ~ x * MD | time + state, data = dta11)
 summary(reg11)
 
 ```
+
+On
