@@ -114,7 +114,7 @@ income from dividends in the state by the state total incomes.
 The interaction term enables to examine whether the relationship between the target
 parameter (consumption) and the independent variable (exposure to the stock
 market) changes with the stock market crash thanks to the dummy $D_t$.
-Here, beta coefficient is the difference in slope between exposure before and 
+Here, the beta coefficient is the difference in slope between exposure before and 
 after the crash. In terms of interpretation, if the coefficient is different
 from zero and statistically significant, then we can assume the crash had an impact on the way 
 exposure of to the stock market affected consumption.
@@ -159,7 +159,7 @@ summary(reg8_feols)
 ```
 
 $\beta x_s D_t$ captures the interaction effect between the state's exposure to the stock 
-market ($x_s), and whether or not the crash happened ($D_t$) on consumption ($y_{st}). 
+market ($x_s)$, and whether or not the crash happened ($D_t$) on consumption ($y_{st}$). 
 $\beta$ mesures whether the effect of state's exposure to the stock market on consumption
 (measured with the log of car sales) changes with the crash.
 Here we find the same coefficient across both regression such that $\beta = 1.311$. We could interprete
@@ -171,14 +171,14 @@ For comparison, in Temin (1976), the author found there was an actual effect of 
 spendings but that it was fairly small.
 
 Note there are no coefficients on exposure ($x_s$) and whether or not the crash happened (crash).
-As indicated in $summary(re8_feols)$, both variables are removed because of collinearity.
+As indicated in summary(reg8_feols), both variables are removed because of collinearity.
 We can assume they were removed by controlling the fixed-effect. Indeed, $x_s$ stays constant across
 each state while $D_t$ affects all states uniformly across time.
 
 
 ### 9. Assuming our measure of exposure to the stock market is the right one,
-# would regression (1) be appropriate to capture the wealth channel of the crash?
-# Would it capture the uncertainty channel that Romer writes about?
+### would regression (1) be appropriate to capture the wealth channel of the crash?
+### Would it capture the uncertainty channel that Romer writes about?
 
 The wealth channel refers to the effect of the crash on households' wealth, which in turn affects consumption.
 Assuming our measure of exposure is the right one and if consider we car sales (a durable good) to be a good
@@ -191,7 +191,7 @@ spendings not because of  wealth destruction but because they anticipate a "nega
 a subsequent decline in household spending and employment." In this case, an initial fall in stock prices might
 worsen expectations due to uncertainty on future wealth/income, causing agents to consume less.
 Romer describes the uncertainty channel as the immediate drop in consumer spending caused by a
-temporary increase in income uncertainty. According to this uncertainty hypothesis, there should be a
+temporary increase in income uncertainty. According to this uncertainty hypothesis, there should be an
 "inverse relationship between consumer spending on durable goods" (here cars) "and uncertainty about future
 income".
 Thus, this regression would not fully capture Romer's uncertainty channel since it is not direcly tied to
