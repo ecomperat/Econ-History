@@ -182,8 +182,8 @@ each state while $D_t$ affects all states uniformly across time.
 
 The wealth channel refers to the effect of the crash on households' wealth, which in turn affects consumption.
 Assuming our measure of exposure is the right one and if consider we car sales (a durable good) to be a good
-proxy for consumption, we might think this regression is appropriate to capture the wealth channel of the crash, keeping in
-mind we operate at the state level.
+proxy for consumption, we might think this regression is appropriate to capture the wealth channel of the crash, 
+keeping in mind we operate at the state level.
 However, it is still difficult to disentengle the fall  in consumption due to wealth exposure to the 
 stock market and to uncertainty. Indeed, as described in Chodorow-Reich et al. (2021), the main challenge when 
 studying the wealth channel is that stock prices are forward-looking.  As a result, agents might decide to cut 
@@ -202,7 +202,27 @@ but it is not specifically designed to measure this channel.
 
 ### 10. Potential problem of income data coming from federal tax returns:
 
-
+As we mentioned earlier, having only 5% of the population paying federal income tax in this
+period might create a strong selection bias, as those paying these taxes might not be representative
+of the average american consumer. In Temin (1976), the wealth effect is estimated to be fairly small,
+one pf the reason being that stock prices only represented a small fraction of total wealth (and was 
+more likely to be detained by richer households). Here we might overestimate the fraction of wealth 
+tied to the stock market.
 
 
 ### 11. BONUS: variant of (1)
+
+
+```{r}
+dta11 <- dta8 %>%
+  mutate(
+    # Create a month-year string for easier handling (e.g., "1929-01", "1930-12")
+    month_year = paste(year, sprintf("%02d", month), sep = "-")
+  ) %>%
+  filter(month_year != "1929-10") %>%  # Remove October 1929
+  mutate(MD = as.factor(month_year))
+
+reg11 <- feols(log_car ~ x * MD | time + state, data = dta11)
+summary(reg11)
+
+```
