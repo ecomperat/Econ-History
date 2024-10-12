@@ -10,7 +10,7 @@ date: "`r Sys.Date()`"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Packages and Environment
+###Packages and Environment
 
 ```{r, results='hide'}
 library(openxlsx)
@@ -66,7 +66,7 @@ dta4 <- dta3 %>%
 
 ### 5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
 
-Ideally, $x_s$ could be the fraction of all wealth tied to the stock market and its fluctuations per hstate.
+Ideally, $x_s$ could be the fraction of all wealth tied to the stock market and its fluctuations per state.
 This would allow us to estimate the exposure of wealth to the stock market fluctuations, and then
 study the impact of the crash on consumption through this "wealth channel".
 This way, the $x_s$ would be an appropriate measure of the exogenous variation in stock market exposure.
