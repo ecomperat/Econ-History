@@ -75,6 +75,8 @@ state in a way that captures potential heterogeneous treatment effects from
 the crash, but is also exogenous to consumption trends. There must be pre-treatment exogeneity;
  $x_s$ must reflect exposure before the crash.
 
+#In an ideal world, would'nt we be looking for household level data on stock market exposure?
+
 
 ### 6. Construct $x_s$ and explain the idea behind this measure:
 
@@ -129,7 +131,7 @@ There might be several identification concerns regarding this regression.
 First, we know that the income data come from federal tax returns at a time 
 when only a small fraction of the population paid federal income tax. Thus,
 our sample would not be representative of the population (the representative 
-american consumer) and we would face a selection bias.
+American consumer) and we would face a selection bias.
 Secondly, we have to consider possible issues related to our proxy;
 there could have been changes in car sales associated with neither 
 the crash nor the exposure to income, creating a potential ommitted variable bias.
@@ -140,6 +142,12 @@ lead to a fall in stock returns and spendings. In this case, the initial decreas
 consumption could worsen the anticipations and further decrease dividends.
 Finally, measurement errors can always be a concern, there might have been 
 mistakes during tax filings and fiscal evasion.
+
+#I would add that car sales effectively function as an instrumental variable
+#for consumption, so the key assumption is that the decline in consumption during 
+#the Great Depression is strongly predicted by car sales (exclusion restriction). But
+# car sales is hardly the only channel through which consumption is affected, which
+#brings us to the omitted variable bias you mentioned.
 
 
 ### 8. Regression (1)
@@ -184,7 +192,7 @@ The wealth channel refers to the effect of the crash on households' wealth, whic
 Assuming our measure of exposure is the right one and if consider we car sales (a durable good) to be a good
 proxy for consumption, we might think this regression is appropriate to capture the wealth channel of the crash, keeping in
 mind we operate at the state level.
-However, it is still difficult to disentengle the fall  in consumption due to wealth exposure to the 
+However, it is still difficult to disentangle the fall  in consumption due to wealth exposure to the 
 stock market and to uncertainty. Indeed, as described in Chodorow-Reich et al. (2021), the main challenge when 
 studying the wealth channel is that stock prices are forward-looking.  As a result, agents might decide to cut 
 spendings not because of  wealth destruction but because they anticipate a "negative stock return and 
@@ -201,6 +209,11 @@ but it is not specifically designed to measure this channel.
 
 
 ### 10. Potential problem of income data coming from federal tax returns:
+
+As we mentioned before, a potential problem is that only very few people paid income taxes and thus filed tax returns.
+However, this problem could be mitigated by the fact that high incomes were more likely to report earnings accurately,
+which are also households more likely to own stock. Thus, while not representative of the population, the sample could still 
+be appropriate for investigating an asset-based wealth channel by focusing on those who own these assets.
 
 
 
