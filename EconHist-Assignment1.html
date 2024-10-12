@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2024-10-11" />
+<meta name="date" content="2024-10-12" />
 
 <title>Assignment 1 - Economic History</title>
 
@@ -1621,7 +1621,7 @@ display: none;
 
 
 <h1 class="title toc-ignore">Assignment 1 - Economic History</h1>
-<h4 class="date">2024-10-11</h4>
+<h4 class="date">2024-10-12</h4>
 
 </div>
 
@@ -1655,8 +1655,8 @@ library(dplyr)</code></pre>
 
 rm(list=ls())
 setwd(&quot;C:/Users/etien/OneDrive/Documents/GitHub/Econ-History&quot;)</code></pre>
-<div id="downlad-the-excel-files" class="section level3">
-<h3>2. Downlad the Excel files</h3>
+<div id="download-the-excel-files" class="section level3">
+<h3>2. Download the Excel files</h3>
 <pre class="r"><code>car = read.xlsx(&quot;StateNewCarRegistrations.xlsx&quot;)
 stock = read.xlsx(&quot;stock_income.xlsx&quot;)
 
@@ -1706,18 +1706,16 @@ head(dta3) #The dataset seems to corresponds to the exemple given.</code></pre>
 <div id="in-an-ideal-world-what-should-x_s-be-if-were-interested-in-the-wealth-channel-of-the-crash" class="section level3">
 <h3>5. In an ideal world, what should <span class="math inline">\(x_s\)</span> be if we’re interested in the wealth
 channel of the crash?</h3>
-<p>The xs should capture the direct impact of the exposure to the stock
-market crash at the state level on consumption, being an appropriate
-measure of the exogenous variation in stock market exposure at the state
-level. This variable would need to reflect the pre-crash financial
-exposure of each state in a way that captures potential heterogeneous
-treatment effects from the crash, but is also exogenous to consumption
-trends.</p>
-<p>In other words, there must be pre-treatment exogeneity; xs must
-reflect exposure before the crash.</p>
-<p>Interesting proxys for <span class="math inline">\(x_s\)</span> could
-be stock ownership rates at the state level or state level wealth tied
-to the financial market.</p>
+<p>The <span class="math inline">\(x_s\)</span> should capture the
+impact of the exposure to the stock market crash at the state level on
+all the wealth of the households, being an appropriate measure of the
+exogenous variation in stock market exposure. But such exposure is
+difficult to measure, which is also why we use state-level data here.
+This variable would need to reflect the pre-crash financial exposure of
+each state in a way that captures potential heterogeneous treatment
+effects from the crash, but is also exogenous to consumption trends.
+There must be pre-treatment exogeneity; <span class="math inline">\(x_s\)</span> must reflect exposure before the
+crash.</p>
 </div>
 <div id="construct-x_s-and-explain-the-idea-behind-this-measure" class="section level3">
 <h3>6. Construct <span class="math inline">\(x_s\)</span> and explain
@@ -1728,36 +1726,66 @@ the idea behind this measure:</h3>
 summary(dta6$x)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ## 0.04257 0.08975 0.12748 0.13285 0.15957 0.39884</code></pre>
-<p>The idea behind this measure is to estimate the exposure of income to
-the stock market crash by computing the share of total income due to
-dividends. In other words, it should reflect the share of agents’ income
-that depends on the stockmarket since the dividends corresponds to the
-reward of holdings assets. Thus, fluctuations in the stock market will
-affect dividends, which will in turn affect income and consumption.</p>
+<p>The idea behind this measure is to estimate the exposure of to the
+stock market crash by using the portion of income linked to the stock
+market. To do so, we compute the share of dividend income in total
+income at the state level. Dividends correspond to the distribution of
+firms’ profits to stockholders; they are closely tied to asset prices,
+thus we expect fluctuations in the stock market to affect them. That is
+why we use it as a proxy for the exposure to the stock market. In
+Chodorow-Reich et al. (2021), the authors estimate an MPC of 3.2 cents
+of dollar for stock wealth annually. These findings support the idea of
+a correlation between the exposure to the stock market and consumption
+and gives us reasons to think that measuring this exposure could help us
+understand the impact of the stock market crash on consumption.</p>
 </div>
 <div id="explain-the-idea-behind-the-regression." class="section level3">
 <h3>7. Explain the idea behind the regression.</h3>
 <pre><code>What are the identification concerns.</code></pre>
 <p>Reg (1): studies effect of stock market crash on consumption at state
-level by using state-level car sales as a proxy. <span class="math inline">\(x_s\)</span> (independent variable) captures the
-exposure of state incomes to fluctuations in the stock market; computed
-by dividing the proportion of total income from dividends in the state
-by the state total incomes. The interaction term enables to examine
-whether the relationship between the target parameter (consumption) and
-the independent variable (exposure to the stock market) changes with the
-stock market crash. Here, beta coefficient is the difference in slope
-between exposure before and after the crash. In terms of interpretation,
-if the coefficient is different from zero, then we can assume had an
-impact on the way exposure of income to the stock market affected
-consumption.</p>
-<p>A time fixed-effect is added to control for potential time trends,
-while the state fixed-effect should control for potential
-characteristics that are specific to states, that we do not observe.
-These fixed-effects are designed to eliminate omitted variable bias by
-excluding unobserved variables that evolve over time or are specific to
-some states but are constant across entities.</p>
-<p>#Identification concerns: endogeneity (check Romer) #Exposure may not
-be constant over the analysed period.</p>
+level by using state-level car sales as a proxy.</p>
+<p>The idea behind this regression is to study the effect of a stock
+market crash on the way market exposure affected consumption, using an
+interaction term, while controlling for both state and time
+fixed-effects.</p>
+<p>We use car sales at the state level as a proxy for consumption <span class="math inline">\(y_{st}\)</span> (independent variable). According
+to Romer (1990), stock market crash caused consumers to “delay current
+spendings” on durable goods, lowering overall consumption. Cars are good
+examples of this type of goods, thus observing changes in car sales
+might be considered as a good way to estimate changes in consumption
+behavior. <span class="math inline">\(x_s\)</span> (independent
+variable) captures the exposure of state incomes to fluctuations in the
+stock market; computed by dividing the proportion of total income from
+dividends in the state by the state total incomes. The interaction term
+enables to examine whether the relationship between the target parameter
+(consumption) and the independent variable (exposure to the stock
+market) changes with the stock market crash thanks to the dummy <span class="math inline">\(D_t\)</span>. Here, beta coefficient is the
+difference in slope between exposure before and after the crash. In
+terms of interpretation, if the coefficient is different from zero, then
+we can assume the crash had an impact on the way exposure of to the
+stock market affected consumption. A time fixed-effect is added to
+control for potential time trends, while the state fixed-effect should
+control for potential characteristics that are specific to states, that
+we do not observe. These fixed-effects are designed to eliminate omitted
+variable bias by excluding unobserved variables that evolve over time or
+are specific to some states but are constant across entities.</p>
+<p>There might be several identification concerns regarding this
+regression. First, we know that the income data come from federal tax
+returns at a time when only a small fraction of the population paid
+federal income tax. Thus, our sample would not be representative of the
+population (the representative american consumer) and we would face a
+selection bias. Secondly, we have to consider possible issues related to
+our proxy; there could have been changes in car sales associated with
+neither the crash nor the exposure to income, creating a potential
+ommitted variable bias. Thirdly, the wealth channel we observe might
+have a problem of endogeneity. As mentioned in Chodorow-Reich et
+al. (2021), stock prices are forward looking. This would mean that if
+agents anticipate a fall decline in future economic fundamentals, it
+lead to a fall in stock returns and spendings. In this case, the initial
+decrease in consumption could worsen the anticipations and further
+decrease dividends. Finally, measurement errors can always be a concern,
+there might have been mistakes during tax filings and fiscal
+evasion.</p>
 </div>
 <div id="regression-1" class="section level3">
 <h3>8. Regression (1)</h3>

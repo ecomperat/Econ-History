@@ -66,7 +66,7 @@ dta4 <- dta3 %>%
 
 ### 5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
 
-The $x_s$ should capture the impact of the exposure to the stock market 
+The $x_s$ should capture the the exposure to the stock market 
 crash at the state level on all the wealth of the households, being an appropriate measure
 of the exogenous variation in stock market exposure. But such exposure is difficult to measure,
 which is also why we use state-level data here.
@@ -96,11 +96,8 @@ and consumption and gives us reasons to think that measuring this exposure could
 the impact of the stock market crash on consumption.
 
 
-### 7. Explain the idea behind the regression.
-    What are the identification concerns.
-
-Reg (1): studies effect of stock market crash on consumption at state level by
-using state-level car sales as a proxy.
+### 7. Explain the idea behind the regression. 
+### What are the identification concerns?
 
 The idea behind this regression is to study the effect of a stock market crash
 on the way market exposure affected consumption, using an interaction term, while
@@ -119,8 +116,8 @@ parameter (consumption) and the independent variable (exposure to the stock
 market) changes with the stock market crash thanks to the dummy $D_t$.
 Here, beta coefficient is the difference in slope between exposure before and 
 after the crash. In terms of interpretation, if the coefficient is different
-from zero, then we can assume the crash had an impact on the way exposure of to the stock 
-market affected consumption.
+from zero and statistically significant, then we can assume the crash had an impact on the way 
+exposure of to the stock market affected consumption.
 A time fixed-effect is added to control for potential time trends, while the
 state fixed-effect should control for potential characteristics
 that are specific to states, that we do not observe.
@@ -153,7 +150,7 @@ dta8 = dta6 %>% #we prepare the data for regression
   mutate (log_car = log(car_sales)) %>% #create a variable for the log of car sales
   mutate (time = as.Date(paste(year, as.numeric(month), "01", sep = "-"))) #
 
-#We use two regression methods:
+#We use two regression methods to check our results:
 reg8_felm = felm(log_car ~ x*crash | time + state, data = dta8)
 summary(reg8_felm)
 
@@ -161,8 +158,22 @@ reg8_feols = feols(log_car ~ x*crash | time + state, data = dta8)
 summary(reg8_feols)
 ```
 
-#Present and explain your results
+$\beta x_s D_t$ captures the interaction effect between the state's exposure to the stock 
+market ($x_s), and whether or not the crash happened ($D_t$) on consumption ($y_{st}). 
+$\beta$ mesures whether the effect of state's exposure to the stock market on consumption
+(measured with the log of car sales) changes with the crash.
+Here we find the same coefficient across both regression such that $\beta = 1.311$. We could interprete
+it as: the effect of exposure to the stock market on car consumption would have increased 
+after the stock market crash. However, we get from reg8_feols that our coefficient is not statistically
+significant, which prevents us from concluding that the crash had any effect on consumption through
+the wealth channel described in Chodorow-Reich et al. (2021).
+For comparison, in Temin (1976), the author found there was an actual effect of the crash and drop in consumers'
+spendings but that it was fairly small.
 
+There are no coefficients on exposure ($x_s$) and whether or not the crash happened (crash).
+As indicated in $summary(re8_feols)$, both variables are removed because of collinearity.
+We can assume they were removed by controlling the fixed-effect. Indeed, $x_s$ stays constant across
+each state while $D_t$ affects all states uniformly across time.
 
 
 ### 9. Assuming our measure of exposure to the stock market is the right one,
