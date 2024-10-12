@@ -1759,7 +1759,7 @@ stock market; computed by dividing the proportion of total income from
 dividends in the state by the state total incomes. The interaction term
 enables to examine whether the relationship between the target parameter
 (consumption) and the independent variable (exposure to the stock
-market) changes with the stock market crash thanks to the dummy <span class="math inline">\(D_t\)</span>. Here, beta coefficient is the
+market) changes with the stock market crash thanks to the dummy <span class="math inline">\(D_t\)</span>. Here, the beta coefficient is the
 difference in slope between exposure before and after the crash. In
 terms of interpretation, if the coefficient is different from zero and
 statistically significant, then we can assume the crash had an impact on
@@ -1839,12 +1839,12 @@ reg8_felm = felm(log_car ~ x*crash | time + state, data = dta8)</code></pre>
 ##                  Within R2: 0.012311</code></pre>
 <p><span class="math inline">\(\beta x_s D_t\)</span> captures the
 interaction effect between the state’s exposure to the stock market
-(<span class="math inline">\(x_s), and whether or not the crash happened
-(\)</span>D_t<span class="math inline">\() on consumption
-(\)</span>y_{st}). <span class="math inline">\(\beta\)</span> mesures
-whether the effect of state’s exposure to the stock market on
-consumption (measured with the log of car sales) changes with the crash.
-Here we find the same coefficient across both regression such that <span class="math inline">\(\beta = 1.311\)</span>. We could interprete it as:
+(<span class="math inline">\(x_s)\)</span>, and whether or not the crash
+happened (<span class="math inline">\(D_t\)</span>) on consumption
+(<span class="math inline">\(y_{st}\)</span>). <span class="math inline">\(\beta\)</span> mesures whether the effect of
+state’s exposure to the stock market on consumption (measured with the
+log of car sales) changes with the crash. Here we find the same
+coefficient across both regression such that <span class="math inline">\(\beta = 1.311\)</span>. We could interprete it as:
 the effect of exposure to the stock market on car consumption would have
 increased after the stock market crash. However, we get from reg8_feols
 that our coefficient is not statistically significant, which prevents us
@@ -1854,8 +1854,8 @@ comparison, in Temin (1976), the author found there was an actual effect
 of the crash and drop in consumers’ spendings but that it was fairly
 small.</p>
 <p>Note there are no coefficients on exposure (<span class="math inline">\(x_s\)</span>) and whether or not the crash
-happened (crash). As indicated in <span class="math inline">\(summary(re8_feols)\)</span>, both variables are
-removed because of collinearity. We can assume they were removed by
+happened (crash). As indicated in summary(reg8_feols), both variables
+are removed because of collinearity. We can assume they were removed by
 controlling the fixed-effect. Indeed, <span class="math inline">\(x_s\)</span> stays constant across each state
 while <span class="math inline">\(D_t\)</span> affects all states
 uniformly across time.</p>
@@ -1864,13 +1864,13 @@ uniformly across time.</p>
 <h3>9. Assuming our measure of exposure to the stock market is the right
 one,</h3>
 </div>
-<div id="would-regression-1-be-appropriate-to-capture-the-wealth-channel-of-the-crash" class="section level1">
-<h1>would regression (1) be appropriate to capture the wealth channel of
-the crash?</h1>
+<div id="would-regression-1-be-appropriate-to-capture-the-wealth-channel-of-the-crash" class="section level3">
+<h3>would regression (1) be appropriate to capture the wealth channel of
+the crash?</h3>
 </div>
-<div id="would-it-capture-the-uncertainty-channel-that-romer-writes-about" class="section level1">
-<h1>Would it capture the uncertainty channel that Romer writes
-about?</h1>
+<div id="would-it-capture-the-uncertainty-channel-that-romer-writes-about" class="section level3">
+<h3>Would it capture the uncertainty channel that Romer writes
+about?</h3>
 <p>The wealth channel refers to the effect of the crash on households’
 wealth, which in turn affects consumption. Assuming our measure of
 exposure is the right one and if consider we car sales (a durable good)
@@ -1888,7 +1888,7 @@ stock prices might worsen expectations due to uncertainty on future
 wealth/income, causing agents to consume less. Romer describes the
 uncertainty channel as the immediate drop in consumer spending caused by
 a temporary increase in income uncertainty. According to this
-uncertainty hypothesis, there should be a “inverse relationship between
+uncertainty hypothesis, there should be an “inverse relationship between
 consumer spending on durable goods” (here cars) “and uncertainty about
 future income”. Thus, this regression would not fully capture Romer’s
 uncertainty channel since it is not direcly tied to the loss of wealth
@@ -1896,6 +1896,7 @@ but rather the agents’ behavior in an uncertain environment. Some of it
 might be reflected in the interaction term since states with greater
 exposure might react more in this setting, but it is not specifically
 designed to measure this channel.</p>
+</div>
 <div id="potential-problem-of-income-data-coming-from-federal-tax-returns" class="section level3">
 <h3>10. Potential problem of income data coming from federal tax
 returns:</h3>
@@ -1953,7 +1954,6 @@ reg11 &lt;- feols(log_car ~ x * MD | time + state, data = dta11)</code></pre>
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## RMSE: 0.329442     Adj. R2: 0.93369 
 ##                  Within R2: 0.083159</code></pre>
-</div>
 </div>
 
 

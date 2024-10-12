@@ -66,14 +66,14 @@ dta4 <- dta3 %>%
 
 ### 5.  In an ideal world, what should $x_s$ be if we're interested in the wealth channel of the crash?
 
-The $x_s$ should capture the the exposure to the stock market 
-crash at the state level on all the wealth of the households, being an appropriate measure
-of the exogenous variation in stock market exposure. But such exposure is difficult to measure,
-which is also why we use state-level data here.
-This variable would need to reflect the pre-crash financial exposure of each 
-state in a way that captures potential heterogeneous treatment effects from 
-the crash, but is also exogenous to consumption trends. There must be pre-treatment exogeneity;
- $x_s$ must reflect exposure before the crash.
+Ideally, $x_s$ could be the fraction of all wealth tied to the stock market and its fluctuations per hstate.
+This would allow us to estimate the exposure of wealth to the stock market fluctuations, and then
+study the impact of the crash on consumption through this "wealth channel".
+This way, the $x_s$ would be an appropriate measure of the exogenous variation in stock market exposure.
+Note that having data at the household level might be more relevant if we want to observe the consumption
+of the representative american household (state level aggregate data might overestimate the size of stock
+market wealth in their portfolio).
+
 
 
 ### 6. Construct $x_s$ and explain the idea behind this measure:
