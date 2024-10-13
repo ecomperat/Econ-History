@@ -1,5 +1,6 @@
 ---
 title: "Assignment 1 - Economic History"
+author: Lionel Chambon, Etienne Compérat, Eli Shapiro, Vivan Sharma
 output:
   pdf_document: default
   html_document:
@@ -234,4 +235,7 @@ summary(reg11)
 
 ```
 
-On
+All of the coefficients for the interaction term in our regression are positive and 
+statistically significant. Regardless, this suggests that the wealth channel hypothesis
+is not supported by the estimates provided by this regression (assuming that the regression
+provides good estimates).
