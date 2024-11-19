@@ -1,0 +1,528 @@
+---
+title: "Economic History - Assignment 2"
+author: "Lionel Chambon"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(lpirfs)
+library(readxl)
+library(fixest)
+library(data.table)
+library(modelsummary)
+library(pROC)
+library(haven)
+library(car)
+
+```
+
+## Part A
+
+```{r}
+
+jst = read_xlsx("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/JSTdatasetR6.xlsx")
+
+tibble(jst)
+names(jst)
+
+```
+
+### Model Estimation
+
+First, we have to generate the log changes and the lags of the private credit 
+supply variable.
+
+```{r}
+
+jst <- jst %>%
+  arrange(country, year) %>%
+  group_by(country) %>%  
+  mutate(
+    rcredit = (tloans/cpi),
+    rgdp = (gdp/cpi),
+    log_credit = log(rcredit),  
+    d_log_credit = log_credit - lag(log_credit, 1),  
+    credit_lag1 = lag(d_log_credit, 1),  
+    credit_lag2 = lag(d_log_credit, 2),  
+    credit_lag3 = lag(d_log_credit, 3),  
+    credit_lag4 = lag(d_log_credit, 4),  
+    credit_lag5 = lag(d_log_credit, 5)  
+  ) %>%
+  ungroup()
+
+```
+
+Next, estimating the logit model:
+
+```{r}
+
+logit_a = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
+                data = jst, 
+                family = binomial(link = "logit"))
+
+```
+
+Note that R automatically removes NA observations of the lags.
+
+Displaying results:
+
+```{r}
+
+summary(logit_a)
+
+```
+
+This tells us that only the second lag of private credit supply is individually
+significant in this specification. This is consistent with the results from
+Schularick and Taylor (2012).
+
+Now, conducting the joint tests:
+
+```{r}
+
+hypothesis1 <- c("credit_lag1 = 0", "credit_lag2 = 0", "credit_lag3 = 0", "credit_lag4 = 0", "credit_lag5 = 0")
+
+wald1 <- linearHypothesis(logit_a, hypothesis1)
+
+print(wald1)
+
+```
+
+The p-value is well below $0.05$, so we can reject the null hypothesis that
+lags of log changes in credit supply are jointly insignificant.
+
+Next, we load the BVX crisis data.
+
+```{r}
+
+###CHANGE
+bvx <- read_dta("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/BVX replication kit/BVX replication kit/data/additional data/Narrative Crisis List, Panics List, and BVX List.dta")
+
+```
+
+This looks a bit messy to merge. First, I identify all crisis years by country,
+before expanding the time series to match the JST dataset and creating an 
+appropriate BVX dummy.
+
+```{r}
+
+bvx_by_country <- bvx %>%
+  filter(!is.na(revised)) %>%
+  group_by(country) %>%
+  summarize(Crisis_Years = list(revised))
+
+print(bvx_by_country)
+
+year_range <- 1870:2020
+
+bvx_ts <- bvx_by_country %>%
+  select(country) %>%
+  distinct() %>%
+  expand(country, year = year_range) %>%
+  left_join(bvx_by_country, by = "country") %>%
+  rowwise() %>%
+  mutate(BVX = ifelse(year %in% unlist(Crisis_Years), 1, 0)) %>%
+  ungroup() %>%
+  select(country, year, BVX)
+
+print(bvx_ts)
+
+```
+
+I check by hand for Argentina and Australia that the dates match.
+Now merging:
+
+```{r}
+
+jst <- jst %>%
+  left_join(bvx_ts, by = c("country", "year"))
+
+print(jst)
+
+```
+
+Based on a manual-double check of crisis dates and dummies, this looks good.
+
+Re-estimating the model:
+
+```{r}
+
+logit_b = feglm(BVX ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
+                data = jst, 
+                family = binomial(link = "logit"))
+
+summary(logit_b)
+
+```
+
+In this model, the second *and* fifth lag are highly significant.
+
+```{r}
+
+hypothesis2 <- c("credit_lag1 = 0", "credit_lag2 = 0", "credit_lag3 = 0", "credit_lag4 = 0", "credit_lag5 = 0")
+
+wald2 <- linearHypothesis(logit_b, hypothesis2)
+print(wald2)
+
+```
+
+Similarly to before, we can reject the null that credit lags are jointly
+insignificant.
+
+Next, we repeat the exercise using the five-year change in the credit-to-GDP
+ratio as a predictor.
+
+First, we have to generate the credit-to-GDP ratio and the five-year change:
+
+```{r}
+
+jst <- jst %>%
+  arrange(country, year) %>%
+  group_by(country) %>%  
+  mutate(
+    credit_to_gdp = (rcredit/rgdp),  
+    five_year_change = credit_to_gdp - lag(credit_to_gdp, 5)
+  ) %>%
+  ungroup()
+
+```
+
+Re-estimating the model: 
+
+```{r}
+
+logit_a2 = feglm(crisisJST ~ five_year_change | country,
+                data = jst, 
+                family = binomial(link = "logit"))
+
+#logit_a2 = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + 
+#                credit_lag4 + credit_lag5 + five_year_change | country,
+#                data = jst, 
+#                family = binomial(link = "logit"))
+
+
+```
+
+Displaying results:
+
+```{r}
+
+summary(logit_a2)
+
+```
+
+The coefficient for the five-year change in the credit-to-GDP ratio is
+positive and highly significant.
+
+### Model Evaluation
+
+First, we split the sample along observations before and after 1984.
+
+```{r}
+
+jst_pre1984 <- jst %>% filter(year <= 1984)
+jst_post1984 <- jst %>% filter(year > 1984)
+
+in_sample_model = feglm(crisisJST ~ five_year_change | country,
+                data = jst_pre1984, 
+                family = binomial(link = "logit"))
+
+summary(in_sample_model)
+
+```
+
+The in-sample estimation produces a highly significant and positive coefficient.
+
+```{r}
+
+outof_sample_model = feglm(crisisJST ~ five_year_change | country,
+                data = jst_post1984, 
+                family = binomial(link = "logit"))
+
+summary(outof_sample_model)
+
+```
+
+The coefficient is even more significant for the out-of-sample model.
+
+Now, we use the in-sample estimation for the post-1984 prediction.
+
+```{r}
+
+jst_pre1984$predict_in_sample <- predict(in_sample_model, 
+                                             newdata = jst_pre1984, 
+                                             type = "response")
+
+jst_post1984$predict_outof_sample <- predict(in_sample_model, 
+                                             newdata = jst_post1984, 
+                                             type = "response")
+
+```
+
+Next, we compute ROC curves:
+
+```{r}
+
+roc_in <- roc(jst_pre1984$crisisJST, jst_pre1984$predict_in_sample)
+
+roc_out <- roc(jst_post1984$crisisJST, 
+                         jst_post1984$predict_outof_sample)
+
+roc_data_in <- data.frame(
+  FPR = 1 - roc_in$specificities,
+  TPR = roc_in$sensitivities,
+  Thresholds = roc_in$thresholds,
+  Model = "In-sample (AUC: 0.71)"
+)
+
+roc_data_out <- data.frame(
+  FPR = 1 - roc_out$specificities,
+  TPR = roc_out$sensitivities,
+  Thresholds = roc_out$thresholds,
+  Model = "Out-of-sample (AUC: 0.75)"
+)
+
+roc_data <- rbind(roc_data_in, roc_data_out)
+
+roc_plot <- ggplot(roc_data, aes(x = FPR, y = TPR, color = Model)) +
+  geom_line(linewidth = 1.2) +  
+  labs(title = "ROC Curves: In-sample (pre-1984) vs Out-of-sample (post-1984) models", 
+       subtitle = "Predictor: 5-year change in credit-to-GDP ratio",
+       x = "False Positive Rate (FPR)", 
+       y = "True Positive Rate (TPR)", 
+       color = "Model") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  scale_color_manual(values = c("blue", "red")) +  
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray")  
+
+print(roc_plot)
+
+
+```
+
+Next, we want to repeat the estimation using a) money and b) public debt
+as predictors.
+
+```{r}
+
+logit_money = feglm(crisisJST ~ money | country,
+                data = jst, 
+                family = binomial(link = "logit"))
+
+summary(logit_money)
+
+```
+
+The coefficient is negative and is significant at the 5%-level.
+
+```{r}
+
+logit_debt = feglm(crisisJST ~ debtgdp | country,
+                data = jst, 
+                family = binomial(link = "logit"))
+
+summary(logit_debt)
+
+```
+
+The coefficient of the debt-to-GDP ratio is negative, but not significant.
+
+Now, plotting the ROC curves. First, we run the predictions for both
+predictors and create the dataframe required for plotting:
+
+```{r}
+
+jst$predict_money <- predict(logit_money, 
+                             newdata = jst, 
+                             type = "response")
+
+jst$predict_debt <- predict(logit_debt, 
+                            newdata = jst, 
+                            type = "response")
+
+roc_money <- roc(jst$crisisJST, jst$predict_money)
+auc_money = round(auc(roc_money), 2)
+
+roc_debt <- roc(jst$crisisJST, jst$predict_debt)
+auc_debt = round(auc(roc_debt), 2)
+
+roc_moneyvdebt <- rbind(
+  data.frame(
+    FPR = 1 - roc_money$specificities,
+    TPR = roc_money$sensitivities,
+    Model = paste("Money Model (AUC:", auc_money, ")")
+  ),
+  data.frame(
+    FPR = 1 - roc_debt$specificities,
+    TPR = roc_debt$sensitivities,
+    Model = paste("Debt Model (AUC:", auc_debt, ")")
+  )
+)
+
+```
+
+Finally, we obtain:
+
+```{r}
+
+moneyvdebt_plot <- ggplot(roc_moneyvdebt, aes(x = FPR, y = TPR, color = Model)) +
+  geom_line(size = 1.2) +
+  labs(
+    title = "ROC Curves for Money and Public Debt as Predictors",
+    x = "False Positive Rate (FPR)",
+    y = "True Positive Rate (TPR)"
+  ) +
+  theme_minimal() +
+  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray") +
+  facet_wrap(~ Model) +  
+  theme(legend.position = "none") 
+
+print(moneyvdebt_plot)
+
+```
+
+Let's recall the previous model for comparison:
+
+```{r}
+
+print(roc_plot)
+
+```
+
+The AUC is slightly higher, so using the 5-year change in the credit-to-GDP
+ratio seems to be the strongest predictor.
+
+## Part B
+
+First, we reload the required datasets.
+
+```{r}
+
+jst = read_xlsx("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/JSTdatasetR6.xlsx")
+
+dummies = read_dta("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/RecessionDummies.dta")
+
+```
+
+First, I check for which countries and years data is available in both 
+datasets.
+
+```{r}
+
+jst_obs <- jst %>%
+  dplyr::select(year, iso) %>%
+  distinct() %>%
+  arrange(iso, year)
+
+print(jst_obs)
+
+recession_obs <- dummies %>%
+  dplyr::select(year, iso) %>%
+  distinct() %>%
+  arrange(iso, year)
+
+print(recession_obs)
+
+
+```
+Before merging, I filter the JST data until 2013 to match with the observations
+of dummies.
+
+```{r}
+
+jst_filtered <- jst %>%
+  filter(year <= 2013)
+
+jst_dummies <- jst_filtered %>%
+  left_join(dummies, by = c("iso", "year"))
+
+head(jst_dummies)
+
+```
+
+As the number of rows remains intact after the merge, I conclude that the 
+merge was successful.
+
+Then, since we do not want to use GDP per capita PPP, I construct real
+GDP per capita by dividing nominal GDP by CPI and population:
+
+```{r}
+
+jst_dummies <- jst_dummies %>%
+  mutate(rgdp = (gdp/cpi))
+
+jst_dummies <- jst_dummies %>%
+  mutate(rgdp_pc = rgdp/cpi)
+
+jst_dummies <- jst_dummies %>%
+  mutate(
+    delta_gdp_1 = rgdp_pc - lag(rgdp_pc, 1),
+    delta_gdp_2 = rgdp_pc - lag(rgdp_pc, 2),
+    delta_gdp_3 = rgdp_pc - lag(rgdp_pc, 3),
+    delta_gdp_4 = rgdp_pc - lag(rgdp_pc, 4),
+    delta_gdp_5 = rgdp_pc - lag(rgdp_pc, 5)
+  ) %>%
+  ungroup()
+
+```
+
+Running the local projections using the *lpirf*-package advertised by Jordà:
+
+```{r}
+
+
+#results_panel <-  lp_lin_panel(data_set = jst_dummies,
+#                               endog_data = "rgdp_pc",
+#                               cumul_mult = TRUE,
+#                               shock = "F" & "N",
+#                               diff_shock = TRUE,
+#                               panel_model = "within",
+#                               panel_effect = "individual",
+#                               robust_cov = "vcovSCC",
+#                               c_exog_data       = "cay",
+#                               l_exog_data       = "cay",
+#                               lags_exog_data    = 2,
+#                               c_fd_exog_data    = colnames(data_set)[c(seq(4,9),11)],
+#                               l_fd_exog_data    = colnames(data_set)[c(seq(3,9),11)],
+#                               lags_fd_exog_data = 2,
+#                               confint           = 1.67,
+#                               hor               = 5)
+
+
+#plot(results_panel)
+
+ 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
