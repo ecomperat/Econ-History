@@ -19,6 +19,10 @@ library(modelsummary)
 library(pROC)
 library(haven)
 library(car)
+library(stargazer)
+library(aod)
+library(pROC)
+library(countrycode)
 
 ```
 
@@ -40,6 +44,9 @@ supply variable.
 
 ```{r}
 
+
+
+
 jst <- jst %>%
   arrange(country, year) %>%
   group_by(country) %>%  
@@ -47,14 +54,15 @@ jst <- jst %>%
     rcredit = (tloans/cpi),
     rgdp = (gdp/cpi),
     log_credit = log(rcredit),  
-    d_log_credit = log_credit - lag(log_credit, 1),  
-    credit_lag1 = lag(d_log_credit, 1),  
-    credit_lag2 = lag(d_log_credit, 2),  
-    credit_lag3 = lag(d_log_credit, 3),  
-    credit_lag4 = lag(d_log_credit, 4),  
-    credit_lag5 = lag(d_log_credit, 5)  
+    d_log_credit = log_credit - shift(log_credit, 1, type = "lag"),  
+    credit_lag1 = shift(d_log_credit, 1, type = "lag"),  
+    credit_lag2 = shift(d_log_credit, 2, type = "lag"),  
+    credit_lag3 = shift(d_log_credit, 3,type = "lag"),  
+    credit_lag4 = shift(d_log_credit, 4, type = "lag"),  
+    credit_lag5 = shift(d_log_credit, 5,type = "lag")  
   ) %>%
   ungroup()
+
 
 ```
 
@@ -62,9 +70,10 @@ Next, estimating the logit model:
 
 ```{r}
 
-logit_a = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
+logit_a = glm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 + factor(country),
                 data = jst, 
                 family = binomial(link = "logit"))
+
 
 ```
 
@@ -74,7 +83,10 @@ Displaying results:
 
 ```{r}
 
-summary(logit_a)
+stargazer(logit_a,
+          type = "text",
+          align = TRUE,
+          omit = c("country"))
 
 ```
 
@@ -153,11 +165,14 @@ Re-estimating the model:
 
 ```{r}
 
-logit_b = feglm(BVX ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
+logit_b = glm(BVX ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 + factor(country),
                 data = jst, 
                 family = binomial(link = "logit"))
 
-summary(logit_b)
+stargazer(logit_b,
+          type = "text",
+          align = TRUE,
+          omit = c("country"))
 
 ```
 
@@ -187,7 +202,7 @@ jst <- jst %>%
   group_by(country) %>%  
   mutate(
     credit_to_gdp = (rcredit/rgdp),  
-    five_year_change = credit_to_gdp - lag(credit_to_gdp, 5)
+    five_year_change = credit_to_gdp - shift(credit_to_gdp, 5, type = "lag")
   ) %>%
   ungroup()
 
@@ -197,7 +212,7 @@ Re-estimating the model:
 
 ```{r}
 
-logit_a2 = feglm(crisisJST ~ five_year_change | country,
+logit_a2 = glm(crisisJST ~ five_year_change + factor(country),
                 data = jst, 
                 family = binomial(link = "logit"))
 
@@ -229,7 +244,7 @@ First, we split the sample along observations before and after 1984.
 jst_pre1984 <- jst %>% filter(year <= 1984)
 jst_post1984 <- jst %>% filter(year > 1984)
 
-in_sample_model = feglm(crisisJST ~ five_year_change | country,
+in_sample_model = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
                 data = jst_pre1984, 
                 family = binomial(link = "logit"))
 
@@ -241,7 +256,7 @@ The in-sample estimation produces a highly significant and positive coefficient.
 
 ```{r}
 
-outof_sample_model = feglm(crisisJST ~ five_year_change | country,
+outof_sample_model = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5  | country,
                 data = jst_post1984, 
                 family = binomial(link = "logit"))
 
@@ -263,11 +278,9 @@ jst_post1984$predict_outof_sample <- predict(in_sample_model,
                                              newdata = jst_post1984, 
                                              type = "response")
 
-
 ```
 
 Next, we compute ROC curves:
-
 
 ```{r}
 
@@ -305,8 +318,6 @@ roc_plot <- ggplot(roc_data, aes(x = FPR, y = TPR, color = Model)) +
   geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "gray")  
 
 print(roc_plot)
-
-
 
 
 ```

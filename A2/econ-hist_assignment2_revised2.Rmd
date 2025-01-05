@@ -19,6 +19,10 @@ library(modelsummary)
 library(pROC)
 library(haven)
 library(car)
+library(stargazer)
+library(aod)
+library(pROC)
+library(countrycode)
 
 ```
 
@@ -52,7 +56,7 @@ jst <- jst %>%
     credit_lag2 = lag(d_log_credit, 2),  
     credit_lag3 = lag(d_log_credit, 3),  
     credit_lag4 = lag(d_log_credit, 4),  
-    credit_lag5 = lag(d_log_credit, 5)  
+    credit_lag5 = lag(d_log_credit, 5) 
   ) %>%
   ungroup()
 
@@ -65,6 +69,7 @@ Next, estimating the logit model:
 logit_a = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
                 data = jst, 
                 family = binomial(link = "logit"))
+
 
 ```
 
@@ -101,7 +106,6 @@ Next, we load the BVX crisis data.
 
 ```{r}
 
-###CHANGE
 bvx <- read_dta("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/BVX replication kit/BVX replication kit/data/additional data/Narrative Crisis List, Panics List, and BVX List.dta")
 
 ```
@@ -187,7 +191,7 @@ jst <- jst %>%
   group_by(country) %>%  
   mutate(
     credit_to_gdp = (rcredit/rgdp),  
-    five_year_change = credit_to_gdp - lag(credit_to_gdp, 5)
+    five_year_change = credit_to_gdp - shift(credit_to_gdp, 5, type = "lag")
   ) %>%
   ungroup()
 
@@ -197,25 +201,22 @@ Re-estimating the model:
 
 ```{r}
 
-logit_a2 = feglm(crisisJST ~ five_year_change | country,
+logit_a2 = feglm(crisisJST ~  five_year_change | country,
                 data = jst, 
                 family = binomial(link = "logit"))
-
-#logit_a2 = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + 
-#                credit_lag4 + credit_lag5 + five_year_change | country,
-#                data = jst, 
-#                family = binomial(link = "logit"))
 
 
 ```
 
 Displaying results:
 
+
 ```{r}
 
 summary(logit_a2)
 
 ```
+
 
 The coefficient for the five-year change in the credit-to-GDP ratio is
 positive and highly significant.
@@ -229,7 +230,7 @@ First, we split the sample along observations before and after 1984.
 jst_pre1984 <- jst %>% filter(year <= 1984)
 jst_post1984 <- jst %>% filter(year > 1984)
 
-in_sample_model = feglm(crisisJST ~ five_year_change | country,
+in_sample_model = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5 | country,
                 data = jst_pre1984, 
                 family = binomial(link = "logit"))
 
@@ -241,7 +242,7 @@ The in-sample estimation produces a highly significant and positive coefficient.
 
 ```{r}
 
-outof_sample_model = feglm(crisisJST ~ five_year_change | country,
+outof_sample_model = feglm(crisisJST ~ credit_lag1 + credit_lag2 + credit_lag3 + credit_lag4 + credit_lag5  | country,
                 data = jst_post1984, 
                 family = binomial(link = "logit"))
 
@@ -263,18 +264,18 @@ jst_post1984$predict_outof_sample <- predict(in_sample_model,
                                              newdata = jst_post1984, 
                                              type = "response")
 
-
 ```
 
 Next, we compute ROC curves:
 
-
 ```{r}
 
 roc_in <- roc(jst_pre1984$crisisJST, jst_pre1984$predict_in_sample)
+auc(roc_in)
 
 roc_out <- roc(jst_post1984$crisisJST, 
                          jst_post1984$predict_outof_sample)
+auc(roc_out)
 
 roc_data_in <- data.frame(
   FPR = 1 - roc_in$specificities,
@@ -287,7 +288,7 @@ roc_data_out <- data.frame(
   FPR = 1 - roc_out$specificities,
   TPR = roc_out$sensitivities,
   Thresholds = roc_out$thresholds,
-  Model = "Out-of-sample (AUC: 0.75)"
+  Model = "Out-of-sample (AUC: 0.64)"
 )
 
 roc_data <- rbind(roc_data_in, roc_data_out)
@@ -307,16 +308,30 @@ roc_plot <- ggplot(roc_data, aes(x = FPR, y = TPR, color = Model)) +
 print(roc_plot)
 
 
-
-
 ```
 
 Next, we want to repeat the estimation using a) money and b) public debt
 as predictors.
 
+
 ```{r}
 
-logit_money = feglm(crisisJST ~ money | country,
+jst <- jst %>%
+  arrange(country, year) %>%
+  group_by(country) %>%  
+  mutate(
+    rmoney = (money/cpi),
+    log_money = log(rmoney),  
+    d_log_money = log_money - lag(log_money, 1),  
+    money_lag1 = lag(d_log_money, 1),  
+    money_lag2 = lag(d_log_money, 2),  
+    money_lag3 = lag(d_log_money, 3),  
+    money_lag4 = lag(d_log_money, 4),  
+    money_lag5 = lag(d_log_money, 5) 
+  ) %>%
+  ungroup()
+
+logit_money = feglm(crisisJST ~ money_lag1 + money_lag2 + money_lag3 + money_lag4 + money_lag5 | country,
                 data = jst, 
                 family = binomial(link = "logit"))
 
@@ -324,11 +339,23 @@ summary(logit_money)
 
 ```
 
-The coefficient is negative and is significant at the 5%-level.
+The coefficient on lag2 is positive and is significant at the 10%-level.
 
 ```{r}
+jst <- jst %>%
+  arrange(country, year) %>%
+  group_by(country) %>%  
+  mutate(
+    d_debt = debtgdp - lag(debtgdp, 1),  
+    debt_lag1 = lag(d_debt, 1),  
+    debt_lag2 = lag(d_debt, 2),  
+    debt_lag3 = lag(d_debt, 3),  
+    debt_lag4 = lag(d_debt, 4),  
+    debt_lag5 = lag(d_debt, 5) 
+  ) %>%
+  ungroup()
 
-logit_debt = feglm(crisisJST ~ debtgdp | country,
+logit_debt = feglm(crisisJST ~ debt_lag1 + debt_lag2 + debt_lag3 + debt_lag4 + debt_lag5 | country,
                 data = jst, 
                 family = binomial(link = "logit"))
 
@@ -336,7 +363,8 @@ summary(logit_debt)
 
 ```
 
-The coefficient of the debt-to-GDP ratio is negative, but not significant.
+The coefficient of the debt-to-GDP ratio on lag1 is negative and significant at the 10-% confidence level.
+The coefficient of the debt-to-GDP ratio on lag4 is negative and significant at the 1-% significance level.
 
 Now, plotting the ROC curves. First, we run the predictions for both
 predictors and create the dataframe required for plotting:
@@ -370,6 +398,10 @@ roc_moneyvdebt <- rbind(
   )
 )
 
+auc_money
+auc_debt
+
+
 ```
 
 Finally, we obtain:
@@ -400,121 +432,90 @@ print(roc_plot)
 
 ```
 
-The AUC is slightly higher, so using the 5-year change in the credit-to-GDP
-ratio seems to be the strongest predictor.
+
 
 ## Part B
 
-First, we reload the required datasets.
+First, we reload the required datasets, clean and merge them.
 
 ```{r}
 
-jst = read_xlsx("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/JSTdatasetR6.xlsx")
+df1 = read_xlsx("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/JSTdatasetR6.xlsx")
 
-dummies = read_dta("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/RecessionDummies.dta")
+df2 = read_dta("C:/Users/etien/OneDrive/Documents/GitHub/Econ-History/A2/RecessionDummies.dta")
+
+# Ensure consistent types for joining columns
+df1 <- df1 %>%
+  mutate(iso = as.character(iso), year = as.integer(year))
+
+df2 <- df2 %>%
+  mutate(iso = as.character(iso), year = as.integer(year))
+
+# Replace NA values in numeric columns of df2 with 0
+df2 <- df2 %>%
+  mutate(across(where(is.numeric), ~replace_na(., 0)))
+
+# Perform the left join
+merged_data <- df1 %>% 
+  left_join(df2, by = c("iso", "year"))
+
+# Inspect the merged data
+head(merged_data)
 
 ```
+Create outcome variable
 
-First, I check for which countries and years data is available in both 
-datasets.
+````{r}
+data_set <- merged_data %>% 
+  mutate(lrgdppc = log(rgdpbarro)*100)
 
-```{r}
-
-jst_obs <- jst %>%
-  dplyr::select(year, iso) %>%
-  distinct() %>%
-  arrange(iso, year)
-
-print(jst_obs)
-
-recession_obs <- dummies %>%
-  dplyr::select(year, iso) %>%
-  distinct() %>%
-  arrange(iso, year)
-
-print(recession_obs)
-
-
-```
-Before merging, I filter the JST data until 2013 to match with the observations
-of dummies.
-
-```{r}
-
-jst_filtered <- jst %>%
-  filter(year <= 2013)
-
-jst_dummies <- jst_filtered %>%
-  left_join(dummies, by = c("iso", "year"))
-
-head(jst_dummies)
-
-```
-
-As the number of rows remains intact after the merge, I conclude that the 
-merge was successful.
-
-Then, since we do not want to use GDP per capita PPP, I construct real
-GDP per capita by dividing nominal GDP by CPI and population:
-
-```{r}
-
-jst_dummies <- jst_dummies %>%
-  mutate(rgdp = (gdp/cpi))
-
-jst_dummies <- jst_dummies %>%
-  mutate(rgdp_pc = rgdp/cpi)
-
-jst_dummies <- jst_dummies %>%
+lp_reg <- data_set %>%
+  select(iso, year,lrgdppc , N, `F`) %>%
   mutate(
-    delta_gdp_1 = rgdp_pc - lag(rgdp_pc, 1),
-    delta_gdp_2 = rgdp_pc - lag(rgdp_pc, 2),
-    delta_gdp_3 = rgdp_pc - lag(rgdp_pc, 3),
-    delta_gdp_4 = rgdp_pc - lag(rgdp_pc, 4),
-    delta_gdp_5 = rgdp_pc - lag(rgdp_pc, 5)
-  ) %>%
-  ungroup()
+    N = ifelse(is.na(N), 0, N),
+    `F` = ifelse(is.na(`F`), 0, `F`)
+  )
 
-```
+````
 
-Running the local projections using the *lpirf*-package advertised by Jordà:
+IRF for normal recession
+````{r}
 
-```{r}
+normal <- lp_lin_panel(
+  data_set = lp_reg,
+  endog_data = "lrgdppc",        # Dependent variable
+  cumul_mult = TRUE,         # Cumulative multipliers
+  shock = "N",               # Normal recession
+  diff_shock = FALSE,        # No differencing of shocks
+  panel_model = "within",  # Fixed effects model
+  c_fd_exog_data = "F", #Control for F
+  confint = 1.96,            # 95% confidence interval
+  hor = 5                    # Horizons: 1 to 5 years
+)
 
+# Plot impulse response functions (IRFs)
+plot(normal)
 
-results_panel <-  lp_lin_panel(data_set = jst_dummies,
-                             endog_data = "rgdp_pc",
-                              cumul_mult = TRUE,
-                              shock = "F" & "N",
-                               diff_shock = TRUE,
-                               panel_model = "within",
-                               panel_effect = "individual",
-                               robust_cov = "vcovSCC",
-                               c_exog_data       = "cay",
-                               l_exog_data       = "cay",
-                               lags_exog_data    = 2,
-                               c_fd_exog_data    = colnames(data_set)[c(seq(4,9),11)],
-                               l_fd_exog_data    = colnames(data_set)[c(seq(3,9),11)],
-                               lags_fd_exog_data = 2,
-                               confint           = 1.67,
-                               hor               = 5)
-
-
-plot(results_panel)
-
- 
-
-```
+````
 
 
 
+````{r}
+financial <- lp_lin_panel(
+  data_set = lp_reg,
+  endog_data = "lrgdppc",    # Dependent variable
+  cumul_mult = TRUE,         # Cumulative multipliers
+  shock = "F",               # Normal recession
+  diff_shock = FALSE,        # No differencing of shocks
+  panel_model = "within",    # Fixed effects model
+  c_fd_exog_data = "N", #Control for N
+  confint = 1.96,            # 95% confidence interval
+  hor = 5                    # Horizons: 1 to 5 years
+)
 
-
-
-
-
-
-
+# Plot impulse response functions (IRFs)
+plot(financial)
+````
 
 
 
